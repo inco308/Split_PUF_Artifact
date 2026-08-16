@@ -1,0 +1,12 @@
+XOR_num,Data_Size,Model,Attempt,Accuracy,Success,Duration_s,Avg_Confidence
+2,50000,IterSplit_v1,1,53.50%,0,273.57,None
+2,50000,IterSplit_v1,2,46.19%,0,265.29,None
+2,50000,IterSplit_v1,3,46.64%,0,268.54,None
+2,50000,IterSplit_v1,1,52.68%,0,264.74,None
+2,50000,IterSplit_v1,2,43.91%,0,270.51,None
+2,50000,IterSplit_v1,3,47.71%,0,267.83,None
+2,50000,IterSplit_v2,1,53.88%,0,302.54,0.8854337930679321
+2,50000,IterSplit_v2,2,53.81%,0,299.41,0.8952547907829285
+2,50000,IterSplit_v2,3,53.41%,0,310.83,0.884002685546875
+4,200000,IterSplit_v1,1,49.61%,0,1125.60,None
+4,200000,IterSplit_v1,2,52.08%,0,1107.68,None

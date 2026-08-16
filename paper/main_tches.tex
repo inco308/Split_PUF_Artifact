@@ -1,0 +1,58 @@
+% ============================================================
+% TCHES 版主文件 — IACR Journal class (iacrj)
+% 共享内容: sections/*.tex
+% ============================================================
+% 官方提交: 用iacrj.cls(官方系统提供alphaurl.bst)
+% 本地编译: iacrj_local.cls用标准alpha样式
+\documentclass[journal=tches,version=preprint]{iacrj_local}
+\license{CC-BY-4.0}
+
+\usepackage{cite,graphicx,amsmath,amssymb,booktabs,multirow}
+
+\title[running={Probabilistic Phase Transition in ML Attacks on XOR APUFs}]
+      {A Probabilistic Phase Transition in ML-Based Modeling Attacks on XOR Arbiter PUFs}
+
+% 投稿版匿名: 姓名/单位/邮箱在录用后补充
+\addauthor[inst={1},surname={Anonymous}]{Anonymous Author(s)}
+\addaffiliation[country={China}]{Anonymous Institution}
+
+\addkeywords{XOR Arbiter PUF, modeling attack, machine learning, phase transition}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We systematically investigate the data requirements for machine learning-based
+modeling attacks on XOR Arbiter PUFs. Through over 400 independent experiments
+spanning 2-XOR to 10-XOR configurations, we uncover a \emph{probabilistic phase
+transition}: the probability of attack success follows an S-shaped curve as a
+function of challenge--response pair (CRP) budget, rather than transitioning at
+a deterministic threshold. The transition midpoint $N_{50}$ ranges from
+$\sim 1\times10^5$ CRPs for 2-XOR to $\sim 8\times10^6$ CRPs for 8-XOR,
+scaling by roughly $3$--$6\times$ per additional XOR level for
+$k = 6\to7\to8$ (the only transitions with reliable estimates), with a
+preliminary lower bound of $>1.5\times10^7$ CRPs for 9-XOR.
+Below the transition region, eight distinct MLP
+architectures---varying in depth, width, activation, and parameter count by
+$15\times$---and two evolution-strategy baselines (PSO, CMA-ES) with the
+structurally correct delay parameterization all fail identically,
+demonstrating that the failure is independent of both model architecture and
+optimization paradigm; above the transition, a standard 4-layer MLP reliably
+succeeds. We show that Interpose PUFs are dramatically more vulnerable than
+their claimed security levels suggest: all tested configurations are broken
+with $10^6$ or fewer CRPs. We recommend that PUF security evaluation adopt the
+probabilistic S-curve framework, reporting $P(\text{success} \mid N, k)$
+rather than binary ``broken/not-broken'' verdicts.
+\end{abstract}
+
+\input{sections/01_introduction.tex}
+\input{sections/02_background.tex}
+\input{sections/03_setup.tex}
+\input{sections/04_results.tex}
+\input{sections/05_discussion.tex}
+\input{sections/06_conclusion.tex}
+\input{sections/07_related_work.tex}
+
+\bibliography{references}
+
+\end{document}

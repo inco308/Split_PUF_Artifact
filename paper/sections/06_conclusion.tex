@@ -1,0 +1,77 @@
+% ============================================================
+% Section 6: Conclusion
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper presents the first systematic characterization of the data
+requirements for ML-based modeling attacks on XOR Arbiter PUFs.  Our
+experiments, spanning approximately 30 GPU-hours and covering XOR
+complexities from 2 to 10, establish four principal findings.
+
+First, attack success is governed by a probabilistic S-curve
+$P(\text{success} \mid N, k)$ rather than a deterministic threshold.  For each
+XOR level $k$, there exists a transition region in the CRP budget $N$ where
+identical experimental configurations can produce either random guessing
+($\approx 50\%$) or near-perfect classification ($> 99\%$).  For 7-XOR,
+attack success reaches 80\% at 1.25M CRPs (8/10 trials) and 100\% at 2M
+CRPs (5/5 trials).  The transition
+midpoint $N_{50}$ scales by a factor of roughly 3--6$\times$ per additional
+XOR level for $k = 6\to7\to8$ (the only transitions with reliable $N_{50}$
+estimates), while the $k=2\to4$ transition is anomalous ($N_{50}$
+decreases).  Across the full range, $N_{50}$ grows from $\sim 1 \times
+10^5$ CRPs for 2-XOR to $\sim 8 \times 10^6$ CRPs for 8-XOR, with a
+preliminary lower bound of $>1.5\times10^7$ CRPs for 9-XOR.  This scaling is
+exponential but not super-exponential, though the per-level factor shows
+variability across levels.
+
+Second, model architecture has negligible impact on attack success below the
+data threshold.  Eight distinct MLP architectures---varying in depth, width,
+activation functions, residual connections, and parameter count by
+$15\times$---and two evolution-strategy baselines (PSO, CMA-ES) with the
+structurally correct delay parameterization all fail identically at
+$\approx 50\%$ accuracy on 8-XOR with 2M and 5M CRPs.  The same standard MLP,
+given 10M CRPs, achieves 99.71\%.  Data quantity,
+not model design or optimization paradigm, is the decisive factor.
+Transfer learning across XOR levels provides no benefit, confirming that each
+XOR complexity defines a fundamentally distinct learning problem.
+
+Third, logistic regression fails for all tested configurations with $k \geq 4$
+within the trainable data range, producing random accuracy regardless of data
+volume.  This confirms that the
+XOR mixing function is fundamentally inaccessible to linear classifiers and
+establishes a lower bound on the required model complexity for PUF modeling
+attacks.
+
+Fourth, Interpose PUFs are significantly more vulnerable than their security
+claims suggest.  A $(4,4)$-iPUF, claimed equivalent to an 8-XOR APUF, is
+attacked with 99.05\% accuracy using only 1M CRPs---while a true 6-XOR APUF
+requires 500K CRPs for comparable reliability.  The split architecture of the
+iPUF leaks information that, in our tested configurations, is consistent
+with an effective security level of a
+$(k_{\text{up}} + k_{\text{down}} - 2)$-XOR APUF.
+
+These findings have direct implications for PUF security evaluation.  Security
+claims should be probabilistic: instead of asking ``can $k$-XOR be broken?'',
+the field should ask ``at what CRP budget does the attack succeed with what
+probability?''  An 8-XOR APUF with CRP exposure limited to $5\times10^6$
+provides practical security against single-GPU ML attacks, while the 9-XOR
+$N_{50}$ exceeds $1.5\times10^7$ CRPs (very rough lower bound; 0/3 at 15M;
+29 total trials across 5 CRP levels), beyond the memory
+capacity of our 12~GB GPU: the 12M and 15M measurements were feasible only on
+a 24~GB RTX~4090.  At $k = 10$, no successes were observed in three trials at
+$10^7$ CRPs, and 15{,}000{,}000~CRPs fail with out-of-memory errors even on
+a 24~GB GPU, establishing a practical upper bound for single-GPU attacks on
+contemporary hardware.
+
+Several limitations suggest directions for future work.  Our experiments use
+simulated noise-free PUFs; silicon noise, environmental variation, and
+manufacturing gradients may alter the transition characteristics.  We test
+only MLP architectures and two evolution-strategy baselines; transformers,
+convolutional networks, or kernel methods could exhibit different scaling
+behavior.  We use uniformly random
+challenges; adaptive or chosen-challenge strategies may reduce the data
+requirement.  Nevertheless, our central result---that attack success is a
+probabilistic function of CRP budget, not a deterministic property of
+architecture or algorithm---provides a new framework for understanding and
+evaluating the security of strong PUFs against ML-based modeling attacks.
