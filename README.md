@@ -18,7 +18,7 @@ code/
   analysis/       CI computation, N50 fitting, figure generation
 data/             frozen copies of all result CSVs used by the paper
 figures/          PDF figures as included in the paper
-paper/            LaTeX sources (TCHES and IEEE-TIFS variants)
+paper/            LaTeX sources (TCHES)
 ```
 
 ## Environment
@@ -80,10 +80,9 @@ cd paper
 bash build.sh          # needs TeX Live 2026 (iacrj class)
 ```
 
-`main_tches.tex` uses `iacrj_local.cls` locally (standard `alpha` bibliography
+`main.tex` uses `iacrj_local.cls` locally (standard `alpha` bibliography
 style). For the official TCHES submission, switch back to `iacrj` in the
 document class line; the submission system provides `alphaurl.bst`.
-`main_tifs.tex` is the IEEE-TIFS variant (IEEEtran).
 
 ## License
 
