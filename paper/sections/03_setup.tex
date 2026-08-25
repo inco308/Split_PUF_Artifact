@@ -10,11 +10,11 @@ All experiments follow a standardized protocol designed for reproducibility.
 
 We simulate XOR Arbiter PUFs using the standard linear delay model.
 Each $k$-XOR APUF consists of $k$ independent 64-bit Arbiter PUFs whose
-outputs are XORed to produce the final response.  Arbiter weights
+outputs are XORed.  Arbiter weights
 $\mathbf{w}_i \in \mathbb{R}^{65}$ (64 delay differences plus one bias term)
 are sampled i.i.d.\ from $\mathcal{N}(0, \alpha^2)$ with $\alpha = 0.05$.
-All experiments use noise-free simulation (measurement noise $\sigma = 0$)
-to isolate the data scaling effect from hardware noise.
+All experiments use noise-free simulation ($\sigma = 0$) to isolate the
+data scaling effect from hardware noise.
 
 Interpose PUFs are simulated by inserting the upper-layer response into
 a designated position (bit~0) of the lower-layer challenge, following the
@@ -25,13 +25,13 @@ specification of~\cite{wisiol2020splitting}.
 We evaluate three families of models:
 
 \paragraph{Standard MLP (baseline).} A 4-layer multi-layer perceptron with
-hidden dimensions $2^{k-1}$, $2^{k}$, $2^{k-1}$, 1, using Tanh activation
-in hidden layers and Sigmoid on the output.  This is the standard model
-used in prior work~\cite{ruhrmair2010modeling,santikellur2023}.
+hidden dimensions $2^{k-1}$, $2^{k}$, $2^{k-1}$, 1, Tanh activations in the
+hidden layers and Sigmoid on the output, as used in prior
+work~\cite{ruhrmair2010modeling,santikellur2023}.
 
-\paragraph{Split MLP (NNModel\_fc).} A single 4-layer MLP with dual output
-(two independent probability heads), where the final response is computed
-as $p_1(1-p_2) + p_2(1-p_1)$.  Parameter count for $k$-XOR is
+\paragraph{Split MLP (NNModel\_fc).} A single 4-layer MLP with two independent
+probability heads, the final response computed as $p_1(1-p_2) + p_2(1-p_1)$.
+Parameter count for $k$-XOR is
 $2^{k/2+1}$ in the hidden layers---roughly $7.7\times$ fewer than the
 standard MLP at $k=6$.
 
@@ -45,46 +45,43 @@ NoSigmoid+BCEWithLogits loss.  The largest variant has $1.08$M parameters.
 
 \begin{itemize}
 \item \textbf{Optimizer}: Adam~\cite{kingma2015adam} with learning rate
-  $\eta = 0.001$, $\beta_1 = 0.9$, $\beta_2 = 0.999$.
-\item \textbf{Learning rate schedule}: Cosine annealing~\cite{loshchilov2017sgdr}
-  over the full training budget ($T_{\max} = 500$ epochs).
-\item \textbf{Loss function}: Binary cross-entropy (BCE).
-\item \textbf{Batch size}: 4{,}096 (RTX 4090 campaigns: 16{,}384).
-\item \textbf{Training epochs}: 500 (maximum).
-\item \textbf{Early stopping}: Training terminates at epoch $e$ if the
-  best validation accuracy observed through epoch $e$ remains below 52\% at
-  $e > 150$ (the architecture-independence campaign used 55\% at $e > 200$).
-  This eliminates approximately 70\% of wasted compute on
-  clearly failing runs without affecting successful runs.
-\item \textbf{Data split}: 80/2/18 with held-out validation (some later
-  campaigns: 80/20 without validation, fixed 150 epochs).  The data are
-  shuffled once before splitting.
-\item \textbf{Data generation}: Challenges are drawn uniformly from
-  $\{-1, +1\}^{64}$.  CRP generation is GPU-accelerated via vectorized
+  $\eta = 0.001$, $\beta_1 = 0.9$, $\beta_2 = 0.999$, cosine-annealed
+  schedule~\cite{loshchilov2017sgdr} over $T_{\max} = 500$ epochs, and
+  binary cross-entropy (BCE) loss.
+\item \textbf{Batch size}: 4{,}096 (16{,}384 on RTX 4090 campaigns);
+  up to 500 training epochs.
+\item \textbf{Early stopping}: training stops at epoch $e$ if the best
+  validation accuracy through $e$ remains below 52\% at $e > 150$ (55\% at
+  $e > 200$ in the architecture-independence campaign), eliminating
+  approximately 70\% of wasted compute on clearly failing runs without
+  affecting successful runs.
+\item \textbf{Data split}: 80/2/18 with held-out validation (later
+  campaigns: 80/20 without validation, fixed 150 epochs); data are shuffled
+  once before splitting.
+\item \textbf{Data generation}: challenges are drawn uniformly from
+  $\{-1, +1\}^{64}$; CRP generation is GPU-accelerated via vectorized
   batch computation.
 \item \textbf{Hardware}: Experiments through 8-XOR ran on a single NVIDIA
   GeForce RTX 3080 Ti (12~GB VRAM) with CUDA 12.1 and PyTorch 2.1.2; the
   9-XOR measurements at and beyond $10^7$ CRPs and all 10-XOR measurements
   were run on an NVIDIA GeForce RTX 4090 (24~GB VRAM).
-\item \textbf{Reproducibility}: Each experiment generates a fresh PUF
-  instance and CRP dataset.  We do not fix random seeds across independent
-  runs; this captures the full distribution of PUF hardness.
+\item \textbf{Reproducibility}: each experiment generates a fresh PUF
+  instance and CRP dataset; we do not fix random seeds across independent
+  runs, capturing the full distribution of PUF hardness.
 \end{itemize}
 
 \subsection{Evaluation Metrics}
 
 \begin{itemize}
-\item \textbf{Test accuracy}: Fraction of correctly predicted responses on
-  the held-out test set (18\% of total CRPs).  Model output is rounded to
+\item \textbf{Test accuracy}: fraction of correctly predicted responses on
+  the held-out test set (18\% of total CRPs), with model output rounded to
   $\{0, 1\}$.
-\item \textbf{Success criterion}: A run is considered successful if test
-  accuracy exceeds $90\%$.
-\item \textbf{Success probability}: $P(\text{success} \mid N, k)$ is
-  estimated as the fraction of successful runs out of $n$ independent
-  trials, with $n$ between 3 and 30 depending on the configuration.
-  Confidence intervals are Wilson score intervals, except for boundary
-  cases ($p = 0$ or $p = 1$) and small-sample rows ($n \leq 5$), which use
-  Clopper-Pearson exact intervals.
+\item \textbf{Success criterion}: test accuracy exceeds $90\%$.
+\item \textbf{Success probability}: fraction of successful runs out of $n$
+  independent trials, with $n$ between 3 and 30 depending on the
+  configuration.  Confidence intervals are Wilson score intervals, except
+  boundary cases ($p = 0$ or $p = 1$) and small-sample rows ($n \leq 5$),
+  which use Clopper-Pearson exact intervals.
 \item \textbf{$N_{50}$}: The CRP budget at which $P(\text{success}) = 50\%$,
   defined as the midpoint of a logistic regression of success probability
   on $\log_{10}(N)$, fitted over interior data points ($0 < p < 1$), with
@@ -93,13 +90,12 @@ NoSigmoid+BCEWithLogits loss.  The largest variant has $1.08$M parameters.
   $N_{50}$ is obtained from the fit covariance.
 \end{itemize}
 
-Note that each $P(\text{success} \mid N, k)$ estimate mixes two sources of
-randomness: the distribution of PUF instance difficulty (each run draws a
-fresh PUF instance) and the stochasticity of SGD training.  The reported
-confidence intervals account for the combined variation but do not
-attribute it to either source.  A stratified analysis separating
-instance-level from training-level variance would require a substantially
-larger experimental design and is left to future work.
+Each $P(\text{success} \mid N, k)$ estimate mixes two sources of randomness:
+PUF instance difficulty (each run draws a fresh instance) and SGD training
+stochasticity.  The reported confidence intervals account for the combined
+variation without attributing it to either source; a stratified separation
+of the two would require a substantially larger experimental design and is
+left to future work.
 
 \subsection{Baseline Methods}
 
@@ -107,5 +103,5 @@ larger experimental design and is left to future work.
 \texttt{SGDClassifier} with log-loss, trained for 1{,}000 iterations with
 early stopping tolerance $10^{-3}$.  LR is tested on all $k$-XOR
 configurations where the data fits in CPU memory ($\leq 2$M CRPs).
-For 8-XOR with $\geq 5$M CRPs, the feature matrix exceeds available RAM;
-for these configurations, we report LR as inapplicable.
+For 8-XOR at $\geq 5$M CRPs, the feature matrix exceeds available RAM, and
+LR is reported as inapplicable.

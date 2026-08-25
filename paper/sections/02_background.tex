@@ -9,9 +9,9 @@
 An Arbiter PUF (APUF) is a delay-based strong PUF that converts manufacturing
 variation in circuit propagation delays into a binary response.  A challenge
 $\mathbf{c} \in \{0, 1\}^{n}$ selects one of $2^n$ paths through a chain of
-$n$ switching stages; each stage contains two multiplexers that either pass
-the signal straight or cross-switch, depending on the challenge bit.  The
-difference in arrival times at two latches determines the response:
+$n$ switching stages, each containing two multiplexers that pass or
+cross-switch the signal depending on the challenge bit.  The arrival-time
+difference at the two latches determines the response:
 \[
 r = \operatorname{sgn}\big(\Delta(\mathbf{c})\big) \in \{-1, +1\},
 \]
@@ -27,9 +27,9 @@ The response is then
 \[
 r = \operatorname{sgn}\big(\langle \mathbf{w}, \boldsymbol{\phi} \rangle\big),
 \]
-where $\mathbf{w} \in \mathbb{R}^{n+1}$ is a weight vector representing the
-per-stage delay differences.  The weights are distributed as
-$\mathbf{w} \sim \mathcal{N}(0, \alpha^2)$ with $\alpha \ll 1$.
+where $\mathbf{w} \in \mathbb{R}^{n+1}$ collects the per-stage delay
+differences, distributed as $\mathbf{w} \sim \mathcal{N}(0, \alpha^2)$ with
+$\alpha \ll 1$.
 
 A $k$-XOR APUF combines $k$ independent APUFs by XORing their responses:
 \[
@@ -39,16 +39,14 @@ r_{\text{XOR}} = \bigoplus_{j=1}^{k} r_j
 \]
 The XOR operation destroys the linear relationship between challenges and
 responses.  The decision boundary is the product of $k$ hyperplanes, creating
-a manifold whose complexity grows exponentially with $k$.  An adversary who
-observes a challenge--response pair $(\mathbf{c}, r_{\text{XOR}})$ learns only
-one bit that depends on all $k$ weight vectors simultaneously; the contribution
-of any single APUF is masked by the others.
+a manifold whose complexity grows exponentially with $k$.  An adversary observing a pair $(\mathbf{c}, r_{\text{XOR}})$ learns only
+one bit that depends on all $k$ weight vectors simultaneously; any single
+APUF's contribution is masked by the others.
 
 The conventional security claim is that a $k$-XOR APUF requires $O(2^k)$ CRPs
 to model~\cite{ruhrmair2010modeling}.  This exponential scaling has made XOR
-APUFs the de facto standard for security-critical PUF applications, despite
-growing evidence that practical attack thresholds are lower than the
-information-theoretic bound.
+APUFs the de facto standard for security-critical applications, despite
+growing evidence that practical attack thresholds fall below this bound.
 
 \subsection{ML-Based Modeling Attacks}
 
@@ -60,44 +58,43 @@ achieving $> 95\%$ accuracy with tens of thousands of
 CRPs~\cite{ruhrmair2013}.
 
 For $k \geq 2$, the XOR operation renders the response linearly inseparable,
-requiring nonlinear models.  Multi-layer perceptrons (MLPs) are the standard
+requiring nonlinear models; multi-layer perceptrons (MLPs) are the standard
 tool.  A typical MLP for XOR PUF modeling has 3--4 hidden layers with Tanh
 activation and a Sigmoid output, trained with binary cross-entropy
-loss~\cite{santikellur2023}.  The hidden layers learn a representation that
-approximates the multiplicative XOR interaction.  The number of hidden units
-is typically chosen in proportion to $2^{k-1}$ to accommodate the $2^k$
-possible XOR configurations.
+loss~\cite{santikellur2023}.  Its hidden units approximate the multiplicative
+XOR interaction, with their number typically chosen in proportion to $2^{k-1}$
+to accommodate the $2^k$ possible XOR configurations.
 
 Recent advances include:
 \begin{itemize}
 \item \textbf{Evolution strategies.} Becker~\cite{becker2015cia}
-demonstrated CMA-ES attacks on 5-XOR and 6-XOR APUFs.  The CalyPSO
-framework~\cite{calypso2024} extended this with particle swarm optimization,
+demonstrated CMA-ES attacks on 5-XOR and 6-XOR APUFs; the CalyPSO
+framework~\cite{calypso2024} extended this to particle swarm optimization,
 reporting success on 8-XOR with approximately 8M CRPs.
 
 \item \textbf{Deep learning.} Fei~et~al.~\cite{fei2024mope} proposed the
-MoPE and MMoPE frameworks that adjust model complexity to PUF complexity,
-reporting success on up to 7-XOR.  Their work emphasizes that architectural
-matching between model capacity and PUF complexity improves attack efficiency.
+MoPE and MMoPE frameworks, which adjust model complexity to PUF complexity
+and report success on up to 7-XOR, showing that architectural matching
+improves attack efficiency.
 
 \item \textbf{Chosen-challenge attacks.} Sayadi~et~al.~\cite{sayadi2025}
-showed that selective choice of challenge patterns can reduce the CRP
-requirement by exploiting systematic biases in the PUF response distribution,
-achieving success on higher XOR configurations than random-challenge attacks.
+showed that selectively choosing challenge patterns exploits systematic biases
+in the PUF response distribution, reducing the CRP requirement and reaching
+higher XOR configurations than random-challenge attacks.
 \end{itemize}
 
 Despite these advances, prior work has focused on \emph{whether} a given XOR
-configuration can be attacked, reporting a single success point or the best
-accuracy achieved.  The \emph{probability} of attack success as a function of
-CRP budget has not been systematically characterized, which is the gap this
-work addresses.
+configuration can be attacked, reporting a single success point or best
+accuracy; the \emph{probability} of attack success as a function of CRP
+budget has not been systematically characterized, the gap this work
+addresses.
 
 \subsection{Split Attack and Interpose PUF}
 
 The split attack, introduced by Wisiol~et~al.~\cite{wisiol2020splitting},
-exploits the structural decomposition of XOR APUFs.  Rather than learning the
-$k$-XOR function directly, the split attack trains separate sub-models on
-subsets of APUFs and combines their outputs probabilistically.  For a $k$-XOR
+exploits the structural decomposition of XOR APUFs: rather than learning the
+$k$-XOR function directly, it trains separate sub-models on subsets of APUFs
+and combines their outputs probabilistically.  For a $k$-XOR
 APUF, the response can be expressed as the XOR of two halves:
 \[
 r = r_{\text{up}} \oplus r_{\text{down}},\quad
@@ -114,18 +111,15 @@ approximately $7.7\times$ fewer parameters than the standard approach
 (\S\ref{sec:success_curves}).
 
 The Interpose PUF (iPUF)~\cite{nguyen2019} was proposed as a
-split-attack-resistant alternative.  An iPUF has a two-layer structure:
-\begin{itemize}
-\item An upper layer of $k_{\text{up}}$ XORed APUFs produces a response
-$r_{\text{up}}$.
-\item This response is inserted into the challenge of a lower layer of
-$k_{\text{down}}$ XORed APUFs at a fixed bit position.
-\end{itemize}
+split-attack-resistant alternative.  An iPUF has a two-layer structure: an
+upper layer of $k_{\text{up}}$ XORed APUFs produces a response $r_{\text{up}}$,
+which is inserted into the challenge of a lower layer of $k_{\text{down}}$
+XORed APUFs at a fixed bit position.
 The security claim is that a $(k_{\text{up}}, k_{\text{down}})$-iPUF provides
 security equivalent to a $(k_{\text{up}} + k_{\text{down}})$-XOR APUF, because
 the attacker cannot separate the upper and lower layers.  Wisiol~et~al. refuted
-this claim by showing that the split attack can be adapted to iPUFs:
-the upper layer is attacked independently, and the lower layer is attacked
-conditioned on the predicted upper response.  Our results (\S\ref{sec:ipuf})
-comprehensively confirm this vulnerability across multiple iPUF configurations
-and demonstrate that iPUF security is substantially lower than claimed.
+this claim by adapting the split attack to iPUFs: the upper layer is attacked
+independently and the lower layer conditioned on the predicted upper response.
+Our results (\S\ref{sec:ipuf}) comprehensively confirm this vulnerability
+across multiple configurations, showing that iPUF security is substantially
+lower than claimed.

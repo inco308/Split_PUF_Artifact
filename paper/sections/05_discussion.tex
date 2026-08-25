@@ -16,12 +16,12 @@ collapsing to a sharp threshold?
 
 \paragraph{A geometric intuition.}
 Consider the empirical loss landscape $L_N(\mathbf{w})$ induced by $N$
-CRPs.  The true weight vector $\mathbf{w}^*$ defines a global minimum
+CRPs, whose true weight vector $\mathbf{w}^*$ defines a global minimum
 corresponding to the exact PUF response function.  When $N$ is small,
-$L_N$ is a poor approximation of the population loss: the terrain is flat,
+$L_N$ poorly approximates the population loss: the terrain is flat,
 with many spurious minima that all yield $\approx 50\%$ accuracy.  As $N$
 grows, a \emph{basin of attraction} forms around $\mathbf{w}^*$, and the
-optimizer (SGD) may fall into it if randomly initialized within its
+optimizer (SGD) may fall into it when randomly initialized within its
 catchment area.
 
 The probability $P(\text{success})$ is therefore the probability that a
@@ -59,7 +59,7 @@ $\mathbb{E}|1-2s_j| \leq 1/2$, and hence
 \;\lesssim\; 2^{-(k-1)}.
 \]
 Each CRP therefore carries an expected gradient signal of order
-$2^{-(k-1)}$ toward every delay parameter.  Accumulating an $\Omega(1)$
+$2^{-(k-1)}$.  Accumulating an $\Omega(1)$
 total signal---the minimum required for the optimizer to escape the flat
 region around the trivial all-zero solution---requires
 $N_c \gtrsim 2^{k-1}$ CRPs, i.e., \emph{exponential growth with base 2 per
@@ -80,13 +80,13 @@ If the basin volume were a step function, $P(\text{success})$ would jump
 from 0 to 1 at a critical $N_c$.  In practice, the basin boundary is fractal
 in high dimensions~\cite{choromanska2015loss}, and random initializations
 sample its volume continuously.  The transition width varies
-nonmonotonically with $k$ in our data.  Higher-XOR landscapes are more
-rugged~\cite{dauphin2014identifying}: the basin of $\mathbf{w}^*$ is smaller
-and more isolated, so a wider absolute range of $N$ is needed for random
-initializations to intersect it.  This explains the widening S-curve in
-absolute terms from 2-XOR (transition spans $10^4$--$10^5$ CRPs) to 8-XOR
-(transition spans $5\times10^6$--$10^7$ CRPs) to 9-XOR (transition likely
-exceeds $1.5\times10^7$ CRPs).
+nonmonotonically with $k$ in our data: higher-XOR landscapes are more
+rugged~\cite{dauphin2014identifying}---the basin of $\mathbf{w}^*$ is smaller
+and more isolated---so a wider absolute range of $N$ is needed for random
+initializations to intersect it.  This explains the widening S-curve from
+2-XOR (transition spans $10^4$--$10^5$ CRPs) to 8-XOR
+($5\times10^6$--$10^7$ CRPs) to 9-XOR (likely exceeding
+$1.5\times10^7$ CRPs).
 
 \paragraph{Relation to grokking and phase transitions in deep learning.}
 Our observed phenomenon shares qualitative features with ``grokking'' in
@@ -94,8 +94,8 @@ overparameterized networks~\cite{power2022grokking} and phase transitions in
 neural network learning~\cite{saxe2014dynamics}.  In grokking, validation
 accuracy remains near random for many epochs before suddenly rising to
 perfect generalization; here, the transition occurs along the data axis
-rather than the epoch axis.  Both phenomena reflect a delayed emergence of
-structured solutions in high-dimensional nonconvex optimization.  The
+rather than the epoch axis.  Both reflect a delayed emergence of structured
+solutions in high-dimensional nonconvex optimization.  The
 probabilistic element---that some runs succeed while others fail at the same
 $N$---is less commonly reported and may be specific to the XOR APUF problem,
 where the target function is known to be exactly realizable by the model.
@@ -104,7 +104,7 @@ where the target function is known to be exactly realizable by the model.
 
 All experiments in this work use idealized, noise-free PUF simulations.
 Real silicon PUFs introduce thermal noise, supply-voltage fluctuations, and
-measurement jitter that cause a fraction of CRP bits to be unreliable.
+measurement jitter that render a fraction of CRP bits unreliable.
 We briefly outline the expected effect on the S-curve framework.
 
 Consider a PUF whose noise-free response $y \in \{0,1\}$ is corrupted by
@@ -113,24 +113,24 @@ information between the noisy and clean responses is
 $I = 1 - H(\varepsilon)$, where $H(\varepsilon) = -\varepsilon\log_2\varepsilon
 - (1-\varepsilon)\log_2(1-\varepsilon)$ is the binary entropy.  The effective
 information per CRP is therefore reduced by a factor of approximately
-$1 - H(\varepsilon)$.  This suggests a simple rescaling: the CRP budget
-required to achieve a given attack success probability would increase by
+$1 - H(\varepsilon)$, suggesting a simple rescaling: the CRP budget
+required for a given attack success probability would increase by
 roughly $1/(1-H(\varepsilon))$.
 
-A preliminary experimental validation supports this prediction.  We trained
+A preliminary experimental validation supports this prediction: training
 the standard MLP on 6-XOR with 400{,}000 CRPs under bit-flip noise levels
-$\varepsilon \in \{0, 3\%, 5\%\}$, with evaluation on clean test data.  The
-observed success probabilities were 80\% (4/5), 60\% (3/5), and 40\% (2/5),
+$\varepsilon \in \{0, 3\%, 5\%\}$, with evaluation on clean test data, gave
+success probabilities of 80\% (4/5), 60\% (3/5), and 40\% (2/5),
 respectively (results/noise\_6xor\_400k\_v2.csv).  The noiseless baseline
 exactly matches the earlier 8/10 = 80\% success probability at this $(k, N)$ point
 (baseline\_mlp\_lr.csv), confirming protocol consistency.  The monotonic
-decrease in success probability with noise level is consistent with the
-information-theoretic rescaling prediction, though the sample size (5 runs
-per condition) permits only a qualitative comparison.
+decrease with noise level is consistent with the information-theoretic
+rescaling prediction, though the sample size (5 runs per condition) permits
+only a qualitative comparison.
 
-A complementary measurement at higher XOR complexity shows a stronger
-effect.  At 8-XOR with 5{,}000{,}000~CRPs, $\varepsilon = 3\%$ noise reduced
-the empirical success probability from 28\% (7/25, noiseless) to 0\% (0/10;
+A complementary measurement at 8-XOR with 5{,}000{,}000~CRPs shows a
+stronger effect: $\varepsilon = 3\%$ noise reduced the empirical success
+probability from 28\% (7/25, noiseless) to 0\% (0/10;
 results/noise\_8xor\_5M.csv)---consistent with the predicted rightward shift
 of the S-curve at higher XOR levels.  The effect appears stronger at $k=8$
 than at $k=6$ (80\% $\to$ 60\% at 400k), suggesting that the noise-induced
@@ -140,20 +140,17 @@ condition) preclude quantitative comparison.
 Under typical environmental noise levels of $\varepsilon = 3$--$5\%$, this
 factor is between approximately $1.24$ and $1.40$ (a hypothetical estimate
 based on an idealized noise model, not an experimental measurement)---a
-rightward shift of the S-curve by approximately $24$--$40\%$ in CRP budget.  The qualitative phenomena---the existence of a
-probabilistic transition and the architecture independence---are preserved,
+rightward shift of approximately $24$--$40\%$ in CRP budget.  The qualitative
+phenomena---the probabilistic transition and the architecture
+independence---are preserved,
 as the key determinant remains the information-theoretic data requirement
 rather than the model family.
 
-A more subtle effect is that nonuniform noise (e.g., bias-temperature
-instability causing systematic errors on specific APUF stages) could
-distort the S-curve shape rather than purely translating it.  Modeling
-these effects---via simulation with injected noise or through silicon
-measurements---is a natural extension of this work.  A preliminary
-simulation at 6-XOR/400k with $\varepsilon \in \{3\%, 5\%\}$ confirms the
-predicted direction (success probability 80\% $\to$ 60\% $\to$ 40\% as
-$\varepsilon$ increases from 0 to 5\%); a comprehensive noise grid across
-$(k, N)$ configurations and a silicon validation remain future work.
+Nonuniform noise (e.g., bias-temperature instability causing systematic
+errors on specific APUF stages) could distort rather than purely translate
+the S-curve.  Modeling these effects---via simulation with injected noise or
+silicon measurements---is a natural extension; a comprehensive noise grid
+across $(k, N)$ configurations and a silicon validation remain future work.
 
 \subsection{Implications for PUF Security Evaluation}
 \label{sec:implications}
@@ -205,35 +202,34 @@ generation and authentication:
     \item \textbf{8-XOR with a lifetime CRP cap.}  An 8-XOR APUF whose
     challenge interface releases fewer than $5\times10^6$ CRPs over its
     lifetime retains a comfortable margin against single-GPU ML attacks:
-    at the cap the attacker succeeds in at most 28\% of trials, and we
-    observed no successful run at or below $2\times10^6$ CRPs.  Moving the
-    cap to $5.5\times10^6$ confers no benefit---the success probability rises to 50\%.
+    at the cap the attacker succeeds in at most 28\% of trials, and no
+    successful run was observed at or below $2\times10^6$ CRPs.  Moving the
+    cap to $5.5\times10^6$ confers no benefit---success probability rises to 50\%.
     \item \textbf{9-XOR for higher assurance margins.}  A 9-XOR APUF shows
-    no transition up to $1.5\times10^7$ CRPs, beyond the largest attack we
-    could mount on a 24~GB GPU.  The marginal hardware cost of one
-    additional XOR stage is small relative to the $>5\times$ increase in
-    data complexity.
+    no transition up to $1.5\times10^7$ CRPs, beyond the largest attack
+    mountable on a 24~GB GPU; the marginal hardware cost of one additional
+    XOR stage is small relative to the $>5\times$ increase in data
+    complexity.
     \item \textbf{Silicon noise is a free hardening layer.}
     $\varepsilon = 3\%$ bit-flip noise erases the residual 28\% success at
     8-XOR/$5\times10^6$ CRPs (0/10 in our grid), shifting the S-curve
-    rightward at no design cost---provided the PUF's own error-correction
+    rightward at no design cost, provided the PUF's error-correction
     requirements remain satisfiable.
     \item \textbf{Avoid iPUF designs.}  The split attack reduces the
     effective security of every tested iPUF configuration by exactly 2 XOR
-    levels, while its interpose stage adds hardware cost.  A designer who
-    needs $(k_{\text{up}}+k_{\text{down}})$-XOR security obtains it more
+    levels, while the interpose stage adds hardware cost: a designer
+    needing $(k_{\text{up}}+k_{\text{down}})$-XOR security obtains it more
     cheaply---and without the structural leakage---from a plain XOR APUF of
     that size.
 \end{itemize}
 
 \paragraph{Choice of success criterion.}
-We adopt 90\% test accuracy as the success criterion throughout this study.
+We adopt 90\% test accuracy as the success criterion throughout.
 Cryptographic key recovery can sometimes exploit partial information at lower
-accuracy levels (60--85\%), so the 90\% threshold represents a conservative
-bound on practical key extraction.  The qualitative S-curve shape is
-insensitive to this choice: shifting the threshold to 80\% or 95\% shifts
-$N_{50}$ by less than 10\% for all $k$, preserving the relative ordering
-across XOR levels.
+accuracy levels (60--85\%), so 90\% represents a conservative bound on
+practical key extraction.  The qualitative S-curve shape is insensitive to
+this choice: shifting the threshold to 80\% or 95\% moves $N_{50}$ by less
+than 10\% for all $k$, preserving the relative ordering across XOR levels.
 
 \paragraph{Architecture does not matter; data does.}
 The architecture independence result (\S\ref{sec:arch_independence}) has a
@@ -261,9 +257,9 @@ evolution-strategy baselines (PSO, CMA-ES; \S\ref{sec:evo_baselines})
 because prior work has
 established that CMA-ES-based methods (Becker~2015,
 CalyPSO~2024~\cite{calypso2024}) require comparable or larger CRP budgets
-than MLPs for XOR APUFs of $k \geq 6$, and our focus is on demonstrating
-that neither model architecture nor optimization paradigm has an effect
-below the transition.
+than MLPs for $k \geq 6$, and our focus is on demonstrating
+that neither architecture nor optimization paradigm has an effect below the
+transition.
 
 Several caveats apply to our findings.
 
@@ -280,24 +276,23 @@ in the 200k--300k range would further resolve the shape of the transition
 at this critical XOR level.
 
 Third, our 9-XOR results are based on 29 total trials across five CRP
-levels (5M, 7.5M, 10M, 12M, and 15M) and should be treated as preliminary.
-The estimated $N_{50}(9) > 1.5\times10^7$ is subject to large uncertainty,
-especially at 12M and 15M where only three trials were run at each level
-(0/3 at both).
+levels (5M, 7.5M, 10M, 12M, 15M) and should be treated as preliminary; the
+estimated $N_{50}(9) > 1.5\times10^7$ is subject to large uncertainty,
+especially at 12M and 15M with only three trials at each level (0/3 at
+both).
 
 Fourth, the architecture independence claim has been verified only at
 $(k=8, N=2\text{M})$ and one additional sub-threshold configuration;
 testing at additional $(k,N)$ pairs---particularly for 6-XOR and 7-XOR
 below their respective transitions---would strengthen the generalization.
 
-Fifth, all experiments use simulated PUF models with Gaussian weight
-distributions and zero measurement noise.  Silicon PUFs introduce thermal
-noise, bias, and environmental variation, which may shift or widen the
-observed transition.
+Fifth, all experiments use simulated PUF models with Gaussian weights and
+zero measurement noise.  Silicon PUFs introduce thermal noise, bias, and
+environmental variation, which may shift or widen the observed transition.
 
 Sixth, this study is limited to MLP architectures and two
 evolution-strategy baselines under uniform random
-challenge protocols.  Generalizability to other model families (CNNs,
+challenge protocols; generalizability to other model families (CNNs,
 transformers, kernel methods) and attack strategies (chosen-challenge,
 adaptive-challenge~\cite{sayadi2025}) remains an open question.
 
@@ -308,11 +303,9 @@ vulnerability profiles.
 Eighth, our computational budget is limited to two GPUs---an NVIDIA
 RTX~3080 Ti (12~GB VRAM) and an RTX~4090 (24~GB VRAM)---which restricts
 $k \geq 10$ to at most $10^7$ CRPs (0/3 successes) and prevents
-15{,}000{,}000~CRPs entirely (out-of-memory).  Consequently, the
-$N_{50}(10)$ transition point is unobservable on current hardware, and any
-quantitative bound beyond $10^7$ CRPs is an engineering inference, not an
-empirical estimate.  Future work with larger GPU memory could extend the
-scaling law to higher XOR complexities.
+15{,}000{,}000~CRPs entirely (out-of-memory), leaving $N_{50}(10)$
+unobservable (see \S\ref{sec:implications}).  Future work with larger GPU
+memory could extend the scaling law to higher XOR complexities.
 
 These limitations suggest promising directions for future work but do not
 diminish the central finding: for MLP and evolution-strategy attacks on XOR

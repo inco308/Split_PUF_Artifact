@@ -35,20 +35,18 @@ This work & 2026 & 2--10 & $10^5$--$10^7$ & MLP & Probabilistic S-curve \\
 \paragraph{Traditional ML attacks.}
 Modeling attacks on Arbiter PUFs were first demonstrated by
 Ruhrmair~et~al.~\cite{ruhrmair2010modeling}, who showed that logistic regression
-with parity-encoded feature vectors achieves high accuracy on single APUFs.
-This result established the linear separability of individual APUF responses and
-motivated the XOR APUF as a countermeasure.  Subsequent work extended the attack
-frontier through evolution strategies.  Becker~\cite{becker2015cia} applied
-CMA-ES to 5-XOR and 6-XOR APUFs, achieving above-chance accuracy with
-substantial CRP budgets.  The CalyPSO
-framework~\cite{calypso2024} employed particle swarm optimization to attack
-8-XOR APUFs, reporting $>95\%$ accuracy with approximately 8M CRPs.  These
-evolution-based approaches search the weight space directly rather than learning
-a parametric model.  While they established that higher XOR configurations are
-attackable, each reported a single success point and none characterized the
-\emph{probability} of success across the data spectrum.  Our work differs by
-measuring $P(\text{success} \mid N, k)$ as a continuous function, revealing that
-the transition is probabilistic rather than deterministic.
+with parity-encoded features achieves high accuracy on single APUFs, establishing
+the linear separability of individual APUF responses and motivating the XOR APUF
+as a countermeasure.  Subsequent work attacked higher XOR configurations through
+evolution strategies: Becker~\cite{becker2015cia} applied CMA-ES to 5-XOR and
+6-XOR APUFs, achieving above-chance accuracy with substantial CRP budgets, and
+the CalyPSO framework~\cite{calypso2024} employed particle swarm optimization
+on 8-XOR APUFs, reporting $>95\%$ accuracy with approximately 8M CRPs.  While
+these approaches established that higher XOR configurations are attackable, each
+reported a single success point and none characterized the \emph{probability} of
+success across the data spectrum.  Unlike prior work, we measure
+$P(\text{success} \mid N, k)$ as a continuous function, revealing a probabilistic
+rather than deterministic transition.
 
 \paragraph{Deep learning attacks.}
 Deep learning has become the dominant approach for XOR PUF modeling.
@@ -58,61 +56,51 @@ with Tanh hidden units as the de facto baseline.  Fei~et~al.~\cite{fei2024mope}
 proposed the MoPE and MMoPE frameworks, which dynamically adjust model
 complexity to match the PUF's XOR configuration, achieving success on up to
 7-XOR with improved sample efficiency; their analysis emphasized that
-architectural matching between model capacity and PUF complexity improves attack
-efficiency.  Sayadi~et~al.~\cite{sayadi2025} introduced a chosen-challenge
-attack strategy for XOR APUFs, demonstrating that selective challenge sampling
-reduces the CRP requirement by exploiting systematic biases in the PUF response
-distribution.  Wang~et~al.~\cite{wang2024c2d2} proposed the C2D2 framework
-that combines contrastive learning with data augmentation to improve
-generalization under limited CRP budgets.  While these works advanced the
-state of the art in attack efficiency, they each frame the problem as a search
-for the best possible architecture or training strategy.  Our work demonstrates
-that below a data-dependent threshold, architectural innovations provide no
-benefit, and above it, a standard MLP suffices.
+architectural matching improves attack efficiency.  Sayadi~et~al.~\cite{sayadi2025}
+introduced a chosen-challenge attack strategy for XOR APUFs, demonstrating that
+selective challenge sampling reduces the CRP requirement by exploiting
+systematic biases in the PUF response distribution.  Wang~et~al.~\cite{wang2024c2d2}
+proposed the C2D2 framework that combines contrastive learning with data
+augmentation to improve generalization under limited CRP budgets.  While these
+works advanced the state of the art in attack efficiency, they each frame the
+problem as a search for the best possible architecture or training strategy.
+Our work shows that below a data-dependent threshold, architectural
+innovations provide no benefit, and above it, a standard MLP suffices.
 
 \paragraph{Split attack and Interpose PUF.}
-The split attack, introduced by Wisiol~et~al.~\cite{wisiol2020splitting}, fundamentally changed the modeling landscape by exploiting
-structural rather than functional approximations.  Rather than learning the
-complete $k$-XOR function, the split attack decomposes it into two smaller
+The split attack, introduced by Wisiol~et~al.~\cite{wisiol2020splitting}, exploits
+structural rather than functional approximations: instead of learning the
+complete $k$-XOR function, it decomposes it into two smaller
 subproblems, training separate models on the upper and lower halves of the XOR
 chain and combining their probabilistic outputs.  This reduces the effective
 XOR complexity by approximately a factor of 2, drastically lowering the CRP
 requirement.  Crucially, Wisiol~et~al. also demonstrated that the Interpose PUF
 (iPUF)~\cite{nguyen2019}, proposed as a split-attack-resistant alternative,
 remains vulnerable: a $(3,3)$-iPUF is attackable with 3M CRPs, refuting the
-claimed security equivalence to a 6-XOR APUF.  Our work extends this result in
+claimed security equivalence to a 6-XOR APUF.  We extend this result in
 two directions: a systematic sweep showing that all configurations up to
 $(4,4)$ fall at $10^6$ or fewer CRPs with $>99\%$ accuracy, and a quantitative
-effective-security characterization anchored to our XOR APUF scaling law---the
+effective-security characterization anchored to our scaling law---the
 split attack reduces the equivalent XOR complexity by exactly 2, yielding a
-CRP-budget gap of $\approx$5$\times$ to $\approx$21$\times$ on our fitted
-scaling law---moving beyond the binary breakability statements typical of
-prior work.
+CRP-budget gap of $\approx$5$\times$ to $\approx$21$\times$---moving beyond
+the binary breakability statements typical of prior work.
 
 \paragraph{Theoretical perspectives.}
-A growing body of work has examined the geometry of neural network loss
-landscapes and its implications for learning.  Choromanska~et~al.~\cite{choromanska2015loss}
-showed that the loss landscape of deep networks has a hierarchical structure
-where low-energy regions form connected manifolds.  Dauphin~et~al.~\cite{dauphin2014identifying}
+The loss-landscape literature offers a theoretical perspective:
+Choromanska~et~al.~\cite{choromanska2015loss}
+showed that low-energy regions of deep-network loss landscapes form connected
+manifolds, and Dauphin~et~al.~\cite{dauphin2014identifying}
 identified saddle points as the dominant optimization obstruction in
 high-dimensional nonconvex problems.  The grokking
 phenomenon~\cite{power2022grokking}---where validation accuracy remains near
 random for many epochs before suddenly rising to perfect
-generalization---shares qualitative features with our observed data-driven
+generalization---shares qualitative features with our data-driven
 phase transition, but occurs along the epoch axis rather than the data axis.
-A recent systematic review~\cite{pufmodeling2026systematic} surveys over 70
-PUF modeling studies and confirms that no prior work has characterized the
-success probability as a function of CRP budget.  Our work bridges the gap
-between these theoretical insights and empirical PUF modeling by showing that
-the data-driven phase transition arises from a growing attractor basin in the
-loss landscape, captured quantitatively by the S-curve framework.
-
-In summary, the literature has focused on the binary question of whether a
-given XOR configuration can be broken, typically under a single set of
-experimental conditions.  We shift the question to a probabilistic one---how
-does the probability of attack success scale with CRP budget?---and provide
-the first systematic empirical characterization across 2-XOR through 9-XOR
-configurations, revealing the architecture-independent data scaling law that
-governs ML-based modeling attacks on XOR Arbiter PUFs.
+A recent systematic review~\cite{pufmodeling2026systematic} of over 70
+PUF modeling studies confirms that no prior work has characterized the
+success probability as a function of CRP budget.  Our work connects these
+theoretical insights to empirical PUF modeling, showing that the data-driven
+phase transition arises from a growing attractor basin in the loss landscape,
+captured quantitatively by the S-curve framework.
 
 

@@ -30,7 +30,7 @@ $90\%$.  Each row aggregates multiple independent training runs from one or
 more experimental campaigns; $95\%$ confidence intervals are Wilson score
 intervals for the binomial proportion.
 
-\begin{table}[t]
+\tablefloatbegin
 \centering
 \caption{Probability of attack success $P(\text{success} \mid N, k)$ as a
 function of CRP budget $N$ and XOR complexity $k$.  Success criterion: test
@@ -96,7 +96,7 @@ $k$ & $N$ (CRPs) & Successes & $P(\text{success})$ & $95\%$ CI \\
   & 15{,}000{,}000 & 0/3   & 0\%    & {[}0\%, 71\%{]} \\
 \bottomrule
 \end{tabular}
-\end{table}
+\tablefloatend
 
 \paragraph{2-XOR.}
 Even the simplest configuration shows a gradual S-curve rather than a sharp
@@ -119,7 +119,7 @@ The transition region spans approximately 300{,}000~CRPs (from 200k to 500k).
 At 200{,}000~CRPs, only 1 of 5 runs succeeds (20\%), consistent with the
 lower edge of the transition (\texttt{6xor\_200k.csv}).  At 300{,}000~CRPs,
 only 8 of 24 runs (33\%) succeed across three independent
-experimental campaigns (\texttt{baseline\_mlp\_lr.csv}, lines~2--11;
+campaigns (\texttt{baseline\_mlp\_lr.csv}, lines~2--11;
 \texttt{phase7\_variance.csv}, lines~2--5;
 \texttt{phase8\_bootstrap.csv}, lines~2--11).  The success probability
 rises to 54\% (13/24) at 400{,}000~CRPs, to 71\% (10/14) at
@@ -145,14 +145,14 @@ The transition is both wider and more stochastic.  At 5{,}000{,}000~CRPs,
 only 7 of 25 runs succeed (28\%), with confidence intervals overlapping those
 at 5{,}500{,}000~CRPs where 7 of 14 runs (50\%) succeed.  Even at
 6{,}000{,}000~CRPs---the point originally suspected to be the
-threshold---only 8 of 30 runs succeed (27\%, aggregated across independent campaigns).  These overlapping intervals are consistent with a wide
+threshold---only 8 of 30 runs succeed (27\%, across independent campaigns).  These overlapping intervals are consistent with a wide
 transition region; distinguishing intrinsic stochasticity from sampling
 noise would require substantially larger sample sizes.  At
 8{,}000{,}000~CRPs, 4 of 5 runs succeed (80\%; \texttt{8xor\_8M.csv}),
 providing the first direct empirical anchor near the fitted midpoint.  At
 10{,}000{,}000~CRPs, 7 of 11
-runs succeed (64\%, aggregated across two independent campaigns), with
-successful runs achieving $>99\%$ accuracy.
+runs succeed (64\%, two independent campaigns), with successful runs
+achieving $>99\%$ accuracy.
 The transition is not yet complete at these data volumes---the success
 probability remains significantly below 100\%
 (\texttt{8xor\_8M.csv};
@@ -171,7 +171,7 @@ The transition appears to begin near 5{,}000{,}000~CRPs, where 2 of 8 runs
 (25\%) succeed (\texttt{9xor\_test.csv}, lines~2--12).  At 7{,}500{,}000~CRPs,
 2 of 5 runs (40\%) succeed (\texttt{9xor\_7\_5M.csv}, lines~2--6).  On a
 24~GB RTX~4090, we extended the measurements to 10{,}000{,}000~CRPs, where
-only 1 of 10 runs succeeds (10\%, aggregated across two protocol variants;
+only 1 of 10 runs succeeds (10\%; across two protocol variants;
 \texttt{9xor\_10M.csv}), and to 12{,}000{,}000~CRPs (0 of 3 runs, 0\%;
 \texttt{9xor\_12M.csv}) and 15{,}000{,}000~CRPs (0 of 3 runs, 0\%;
 \texttt{9xor\_15M.csv}).  The low success probability at 10{,}000{,}000~CRPs
@@ -210,9 +210,8 @@ Markers are empirical measurements; dashed lines are logistic fits. Error bars d
 \end{figure}
 
 \paragraph{Scaling of the transition midpoint.}
-Taking $N_{50}$ (the data level at which $P(\text{success}) \approx 50\%$) as
-a characteristic scale, logistic fits to the full dataset yield the following
-estimates: $N_{50}(2) \approx 1.03\times10^5$ ($R^2=0.945$),
+Taking $N_{50}$ as the characteristic scale, logistic fits to the full
+dataset yield the following estimates: $N_{50}(2) \approx 1.03\times10^5$ ($R^2=0.945$),
 $N_{50}(4) < 7.5\times10^4$ (80\% success at lowest tested budget; midpoint unconstrained below),
 $N_{50}(6) \approx 3.84\times10^5$ ($R^2=0.863$),
 $N_{50}(7) \approx 1.32\times10^6$ ($R^2=0.655$),
@@ -225,11 +224,11 @@ $N_{50}$ estimates); the $k=2\to4$ transition is anomalous ($N_{50}$
 decreases), rather than following the factor of 2 predicted by a naive
 information-theoretic counting argument.
 However, the 8-XOR fit quality ($R^2 = 0.546$) and preliminary 9-XOR data
-caution against treating this as a stable law.  For example,
+caution against treating this as a stable law: the ratios
 $N_{50}(8) / N_{50}(7) \approx 6.1$,
 $N_{50}(7) / N_{50}(6) \approx 3.4$, and
-$N_{50}(9) / N_{50}(8) > 1.9$ (preliminary) show variability across
-levels.  Overall, the empirical data complexity grows exponentially in $k$,
+$N_{50}(9) / N_{50}(8) > 1.9$ (preliminary) vary across levels.
+Overall, the empirical data complexity grows exponentially in $k$,
 but with a base larger than 2, indicating that MLPs become progressively less
 efficient at extracting information from CRPs as XOR complexity increases.
 A heuristic PAC-learning picture (see \S\ref{sec:discussion}) suggests
@@ -256,12 +255,11 @@ approximate due to limited sampling below their transition midpoints.}
 \label{sec:lr_bottleneck}
 
 A natural question is whether simpler linear models can exploit the same data.
-Table~\ref{tab:lr_mlp} compares MLP and logistic regression (LR) performance
-across multiple XOR levels.  The results are unambiguous: logistic regression
-produces near-random accuracy ($\approx 50\%$) for all tested configurations
-with $k \geq 4$ within the trainable data range.
+Table~\ref{tab:lr_mlp} compares MLP and logistic regression (LR) across XOR
+levels: LR produces near-random accuracy ($\approx 50\%$) for all tested
+configurations with $k \geq 4$ within the trainable data range.
 
-\begin{table}[t]
+\tablefloatbegin
 \centering
 \caption{Comparison of MLP versus logistic regression (LR) attack
 performance.  LR accuracy is consistently $\approx 50\%$ for all tested
@@ -289,29 +287,27 @@ the closed-form solver's capacity on a 12GB GPU).}\\
 standard deviations.}
 \end{tabular}
 }
-\end{table}
+\tablefloatend
 
-This result confirms that the XOR operation introduces a nonlinearity that
-is fundamentally inaccessible to linear models.  The XOR of $k$ APUF
-decisions creates a decision boundary that requires at least one hidden layer
-to approximate.  More importantly, it demonstrates that when the MLP succeeds,
-it is indeed learning the XOR structure rather than exploiting some linear
-artifact in the data.  Polynomial feature expansion (degrees 2 and 3) also
-fails on 4-XOR at 100{,}000~CRPs ($\approx 50\%$ accuracy; 3 runs per
-degree; results/poly\_lr\_4xor.csv), indicating that the failure of linear
-models is not merely a matter of linear feature inadequacy.
+This result confirms that the XOR nonlinearity is fundamentally inaccessible
+to linear models: the decision boundary requires at least one hidden layer to
+approximate, and when the MLP succeeds it is learning the XOR structure rather
+than exploiting a linear artifact in the data.  Polynomial feature expansion
+(degrees 2 and 3) also fails on 4-XOR at 100{,}000~CRPs ($\approx 50\%$
+accuracy; 3 runs per degree; results/poly\_lr\_4xor.csv), indicating that the
+failure is not merely a matter of linear feature inadequacy.
 
 % ------------------------------------------------------------
 \subsection{Architecture Independence}
 \label{sec:arch_independence}
 
-If data quantity is the dominant factor, then model architecture choices
-should have negligible impact on attack success below the transition.
-We tested this hypothesis on 8-XOR with 2{,}000{,}000~CRPs (well below the
-transition midpoint) by varying depth, width, activation functions, residual
-connections, and even parameter count by an order of magnitude.
+If data quantity is the dominant factor, architecture choices should have
+negligible impact on attack success below the transition.  We tested this on
+8-XOR with 2{,}000{,}000~CRPs (well below the transition midpoint), varying
+depth, width, activation, residual connections, and parameter count by an
+order of magnitude.
 
-\begin{table}[t]
+\tablefloatbegin
 \centering
 \caption{Architecture independence experiment.  All models were trained on
 8-XOR with 2{,}000{,}000~CRPs (below transition).  None exceed 51\% test
@@ -336,16 +332,15 @@ Big MLP ($k{=}10$, $\sim$1.1M params) & 1{,}083{,}905 & 50.05\% & 136 \\
 \emph{Same MLP with 10M data}         & 74{,}369 & \textbf{99.71\%} & 1{,}666 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\tablefloatend
 
 Table~\ref{tab:arch} shows the results.  Every architecture---from the
 smallest standard MLP to a network with $15\times$ more parameters---produces
 indistinguishable near-random accuracy ($49.96\%$--$50.08\%$).  The final row
 provides a critical control: the same standard MLP, when given
 10{,}000{,}000~CRPs (above the transition), achieves 99.71\%.  The architecture itself is not the bottleneck; data volume is.
-The simultaneous variation of multiple architectural dimensions
-(depth, width, activation, residuals) in Table~\ref{tab:arch} is a deliberate
-\emph{stress test} rather than a single-variable ablation.  While this stress
+This simultaneous variation is a deliberate \emph{stress test} rather
+than a single-variable ablation.  While this stress
 test does not logically rule out that some untested combination could
 succeed, the uniform failure of $15\times$ parameter-count variations across
 depth, width, activation, and residual connectivity provides suggestive
@@ -364,13 +359,12 @@ capacity, is the determining factor. Parameter counts are shown in parentheses.}
 \end{figure}
 
 We also tested whether transfer learning could circumvent the data
-requirement.  A model pre-trained on 6-XOR (achieving 99.92\% on that task)
-was fine-tuned on 8-XOR with 2{,}000{,}000~CRPs.  The fine-tuned model attains
-50.17\% accuracy---identical to training from scratch
+requirement: a model pre-trained on 6-XOR (achieving 99.92\% on that task)
+was fine-tuned on 8-XOR with 2{,}000{,}000~CRPs and attains 50.17\%
+accuracy---identical to training from scratch
 (\texttt{8xor\_v2\_results.csv}, line~4, strategy B1).  No knowledge
-transfers across XOR complexities, consistent with the view that each XOR
-level defines a distinct learning problem with independent information
-requirements.
+transfers across XOR complexities, consistent with each XOR level defining a
+distinct learning problem with independent information requirements.
 
 % ------------------------------------------------------------
 \subsection{Evolution Strategies as Baselines}
@@ -388,14 +382,14 @@ objective is the soft-bit XOR log-likelihood
 P(r = 1) = \frac{1}{2}\left(1 - \prod_{k=1}^{8}\left(1 - 2\sigma(D_k)\right)\right),
 \]
 where $D_k$ is the delay difference of the $k$-th APUF and $\sigma$ is the
-logistic sigmoid.  This objective is smooth, and its global optimum is
-exactly the true delay vector---so any failure cannot be attributed to
-model capacity or a suboptimal parameterization.  PSO used 20 particles
+logistic sigmoid.  The objective is smooth, and its global optimum is exactly the true delay
+vector, so any failure cannot be attributed to model capacity or a
+suboptimal parameterization.  PSO used 20 particles
 with inertia weight $w = 0.72$ and acceleration coefficients
 $c_1 = c_2 = 1.49$ for 5{,}000 iterations; CMA-ES used population size 23,
 initial step size $\sigma_0 = 0.3$, and a budget of 10{,}000 generations.
 
-\begin{table}[t]
+\tablefloatbegin
 \centering
 \caption{Evolution-strategy baselines on 8-XOR, all below the transition
 midpoint.  All runs use the soft-bit XOR log-likelihood over the
@@ -416,17 +410,16 @@ PSO (20 particles) & 5{,}000{,}000 & 50.03/50.10\% & 49.98/49.92\% & 0.6931 \\
 CMA-ES (pop.\ 23)  & 5{,}000{,}000 & 50.53\%       & 49.98\%       & 0.6929 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\tablefloatend
 
 Table~\ref{tab:evo} shows the results at 2{,}000{,}000 and 5{,}000{,}000
-CRPs, both well below the fitted midpoint $N_{50}(8) \approx 8\times10^6$.
-Both methods converge to the trivial all-zero delay solution---the
+CRPs, both well below the fitted midpoint $N_{50}(8) \approx 8\times10^6$:
+both methods converge to the trivial all-zero delay solution---the
 entropy-optimal random-guessing point---with train and test accuracies
-indistinguishable from chance.  This demonstrates that the failure below
-the data threshold is not an artifact of MLP optimization: even a smooth
-likelihood objective over the correct 520-dimensional delay parameterization
-provides no signal at these data volumes.  Architecture independence
-therefore extends beyond the MLP family to the level of the optimization
+indistinguishable from chance.  The failure is thus not an artifact of MLP
+optimization: even a smooth likelihood objective over the correct
+520-dimensional delay parameterization provides no signal at these data
+volumes.  Architecture independence therefore extends to the optimization
 paradigm: gradient-based and derivative-free methods fail identically
 below the data threshold.
 
@@ -435,18 +428,16 @@ below the data threshold.
 \label{sec:ipuf}
 
 Interpose PUFs~(iPUFs) were proposed as a more secure alternative to XOR
-APUFs, with the claim that a $(k_{\text{up}}, k_{\text{down}})$-iPUF
-provides security equivalent to a $(k_{\text{up}}+k_{\text{down}})$-XOR
+APUFs, claiming that a $(k_{\text{up}}, k_{\text{down}})$-iPUF provides
+security equivalent to a $(k_{\text{up}}+k_{\text{down}})$-XOR
 APUF~\cite{nguyen2019}.  Wisiol~et~al.~\cite{wisiol2020splitting}
-showed that a single configuration, $(3,3)$, can be broken with
-$3\times10^6$ CRPs.  We extend this in two directions: a \emph{systematic
-sweep} over all configurations up to $(4,4)$, showing that every one falls
-at $10^6$ or fewer CRPs, and a \emph{quantitative} characterization of the
-resulting effective security level, anchored to our XOR APUF scaling law
-(\S\ref{sec:success_curves}).  Our experiments refute the claimed security
-level for the tested configurations.
+broke the single configuration $(3,3)$ with $3\times10^6$ CRPs.  We extend
+this in two directions: a \emph{systematic sweep} over all configurations up
+to $(4,4)$, showing that every one falls at $10^6$ or fewer CRPs, and a
+\emph{quantitative} characterization of the resulting effective security
+level, anchored to our XOR APUF scaling law (\S\ref{sec:success_curves}).
 
-\begin{table}[t]
+\tablefloatbegin
 \centering
 \caption{iPUF attack results.  All configurations are attacked successfully
 with 1{,}000{,}000~CRPs or fewer.  Equiv.\ XOR refers to the
@@ -478,17 +469,16 @@ iPUF Config. & Equiv.\ XOR & $N$ (CRPs) & Test Acc. & Params \\
   &                         & 5{,}000{,}000 & 99.73\% & 20{,}801 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\tablefloatend
 
-As shown in Table~\ref{tab:ipuf}, the tested iPUF configurations all
-succumb to the split attack with 1{,}000{,}000~CRPs, achieving accuracies
-$> 99\%$.
+All tested iPUF configurations succumb to the split attack with
+1{,}000{,}000~CRPs at $> 99\%$ accuracy (Table~\ref{tab:ipuf}).
 A $(4,4)$-iPUF---claimed to be as secure as an 8-XOR APUF---is attacked with
-99.05\% accuracy using 20{,}801 total parameters (Table~\ref{tab:ipuf}).
+99.05\% accuracy using 20{,}801 total parameters.
 By contrast, a true 6-XOR APUF
-requires 500{,}000~CRPs to achieve comparable reliability (90\% success
-probability).  Based on our fitted scaling law, we estimate that a true 8-XOR APUF
-would require approximately $8.0\times 10^6$ CRPs---well beyond the
+requires 500{,}000~CRPs for comparable reliability (90\% success
+probability), and our fitted scaling law estimates approximately
+$8.0\times 10^6$ CRPs for a true 8-XOR APUF---well beyond the
 1{,}000{,}000~CRPs at which the $(4,4)$-iPUF is trivially broken.
 The split architecture of the iPUF fundamentally leaks information that the
 XOR APUF does not.  In the tested configurations, the effective security

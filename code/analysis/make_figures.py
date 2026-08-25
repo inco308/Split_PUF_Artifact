@@ -77,7 +77,7 @@ def ci_bounds(p, n):
 
 
 def fig_s_curves():
-    fig, ax = plt.subplots(figsize=(5.4, 3.6))
+    fig, ax = plt.subplots(figsize=(5.4, 2.9))
     for i, (label, d) in enumerate(S_CURVES.items()):
         N = np.array(d['N']) / 1e6
         p = np.array(d['p'], float)
@@ -111,22 +111,23 @@ def fig_scaling_law():
     ks = np.array([2, 4, 6, 7, 8, 9])
     n50 = np.array([1.03e5, 7.5e4, 3.84e5, 1.32e6, 8.0e6, 12e6])
     labels = ['103k', '<75k', '384k', '1.32M', '8.0M', '>10M']
-    fig, ax = plt.subplots(figsize=(4.2, 4.0))
+    fig, ax = plt.subplots(figsize=(4.2, 3.2))
     ax.semilogy(ks, n50, '-', color=CAT[0], linewidth=1.8, zorder=2)
     ax.plot(ks, n50, marker='o', linestyle='none', color=CAT[0],
             markersize=5, markeredgewidth=0.6, markeredgecolor=INK,
             markerfacecolor=SURFACE, zorder=3)
-    for x, y, lab in zip(ks, n50, labels):
+    for i, (x, y, lab) in enumerate(zip(ks, n50, labels)):
         va = 'bottom' if y < 1e6 else 'top'
         off = 8 if y < 1e6 else -8
-        ax.annotate(lab, (x, y), xytext=(0, off), textcoords='offset points',
+        xoff = -14 if i == len(ks) - 1 else 0  # 最后一个标签左移避让倍数注释
+        ax.annotate(lab, (x, y), xytext=(xoff, off), textcoords='offset points',
                     ha='center', va=va, fontsize=8, color=INK)
     # 每级倍数注释: 放在线段中点下方, 水平右移避开两端点标签
     for i in range(len(ks) - 1):
         ratio = n50[i + 1] / n50[i]
         mid_x = (ks[i] + ks[i + 1]) / 2
         mid_y = np.sqrt(n50[i] * n50[i + 1])
-        ax.annotate(f'{ratio:.1f}$\\times$', (mid_x, mid_y), xytext=(8, -8),
+        ax.annotate(f'{ratio:.1f}$\\times$', (mid_x, mid_y), xytext=(14, -14),
                     textcoords='offset points', fontsize=7,
                     color=INK2, ha='center', va='top')
     ax.annotate('10-XOR: 15M OOM\non 24 GB', xy=(10, 2e7), fontsize=7,
