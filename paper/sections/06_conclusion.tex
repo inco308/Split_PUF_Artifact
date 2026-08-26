@@ -20,7 +20,7 @@ midpoint $N_{50}$ scales by a factor of roughly 3--6$\times$ per additional
 XOR level for $k = 6\to7\to8$ (the only transitions with reliable $N_{50}$
 estimates), while the $k=2\to4$ transition is anomalous ($N_{50}$
 decreases).  Across the full range, $N_{50}$ grows from $\sim 1 \times
-10^5$ CRPs for 2-XOR to $\sim 8 \times 10^6$ CRPs for 8-XOR, with a
+10^5$ CRPs for 2-XOR to $\sim 6.6 \times 10^6$ CRPs for 8-XOR, with a
 preliminary lower bound of $>1.5\times10^7$ CRPs for 9-XOR.  This scaling is
 exponential but not super-exponential, though the per-level factor shows
 variability across levels.
@@ -44,12 +44,12 @@ establishes a lower bound on the required model complexity for PUF modeling
 attacks.
 
 Fourth, Interpose PUFs are significantly more vulnerable than their security
-claims suggest.  A $(4,4)$-iPUF, claimed equivalent to an 8-XOR APUF, is
+claims suggest.  A $(4,4)$-iPUF, claimed comparable to a 6-XOR APUF, is
 attacked with 99.05\% accuracy using only 1M CRPs---while a true 6-XOR APUF
 requires 500K CRPs for comparable reliability.  The split architecture of the
 iPUF leaks information that, in our tested configurations, is consistent
-with an effective security level of a
-$(k_{\text{up}} + k_{\text{down}} - 2)$-XOR APUF.
+with the $\max\{k_{\text{up}}, k_{\text{down}}\}$-XOR level established by
+the splitting attack.
 
 These findings have direct implications for PUF security evaluation.  Security
 claims should be probabilistic: instead of asking ``can $k$-XOR be broken?'',

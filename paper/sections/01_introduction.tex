@@ -36,7 +36,7 @@ This paper makes the following contributions:
     multiple data levels, with 3--30 independent training runs per
     configuration (\S\ref{sec:success_curves}).  The transition midpoint
     $N_{50}$ scales rapidly: from $\sim 10^5$ CRPs for 2-XOR to
-    $\sim 8.0 \times 10^6$ CRPs for 8-XOR (logistic fit), and
+    $\sim 6.6 \times 10^6$ CRPs for 8-XOR (logistic fit), and
     $> 1.5 \times 10^7$ CRPs for 9-XOR (preliminary lower bound).
 
     \item \textbf{Architecture independence across model families and
@@ -58,10 +58,9 @@ This paper makes the following contributions:
     tested, up to $(4,4)$-iPUF, succumbs to the split attack with
     1{,}000{,}000 CRPs and $> 99\%$ accuracy.  Going beyond the established
     breakability result~\cite{wisiol2020splitting}, we quantify the
-    effective security level relative to our XOR APUF scaling law: the split
-    attack reduces the equivalent XOR complexity by exactly 2, yielding a
-    CRP-budget gap that grows from $\approx$5$\times$ at $(2,4)$ to
-    $\approx$21$\times$ at $(4,4)$ (\S\ref{sec:ipuf}).
+    effective security level relative to our XOR APUF scaling law and confirm
+    Wisiol's characterization that splitting reduces iPUF security to roughly
+    the $\max\{k_{\text{up}},k_{\text{down}}\}$-XOR level (\S\ref{sec:ipuf}).
 
     \item \textbf{Practical bound for 8-XOR.}  An 8-XOR APUF with CRP
     exposure limited to $5 \times 10^6$ CRPs provides practical security

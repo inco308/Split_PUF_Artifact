@@ -53,7 +53,7 @@ NoSigmoid+BCEWithLogits loss.  The largest variant has $1.08$M parameters.
 \item \textbf{Early stopping}: training stops at epoch $e$ if the best
   validation accuracy through $e$ remains below 52\% at $e > 150$ (55\% at
   $e > 200$ in the architecture-independence campaign), eliminating
-  approximately 70\% of wasted compute on clearly failing runs without
+  most wasted compute on clearly failing runs without
   affecting successful runs.
 \item \textbf{Data split}: 80/2/18 with held-out validation (later
   campaigns: 80/20 without validation, fixed 150 epochs); data are shuffled

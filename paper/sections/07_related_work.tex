@@ -15,17 +15,17 @@ CRP budgets are approximate and reported at or near the transition midpoint.}
 Method & Year & $k$-range & CRP required & Model & Notes \\
 \midrule
 LR (Ruhrmair~et~al.)~\cite{ruhrmair2010modeling}
-  & 2010 & 1--4 & $10^4$--$10^5$ & LR & Fails for $k\geq4$ \\
+  & 2010 & 1--6 & $10^4$--$2\times10^5$ & LR & parity-encoded features \\
 CMA-ES (Becker)~\cite{becker2015cia}
-  & 2015 & 1--6 & $10^5$--$10^6$ & CMA-ES & Slower than MLP \\
+  & 2015 & 1--32 & $4\times10^3$--$2\times10^6$ & CMA-ES & reliability-based \\
 Split Attack (Wisiol~et~al.)~\cite{wisiol2020splitting}
   & 2020 & i (iPUF) & $\sim$$10^6$ & MLP & Breaks iPUF \\
 MoPE (Fei~et~al.)~\cite{fei2024mope}
-  & 2024 & 1--7 & $10^4$--$10^6$ & MLP+MoPE & Improves low-XOR \\
+  & 2024 & 1--7 & $10^4$--$2.4\times10^6$ & MLP+MoPE & Improves low-XOR \\
 Chosen Challenge (Sayadi~et~al.)~\cite{sayadi2025}
-  & 2025 & 1--64 & $10^2$--$10^5$ & LR & Req.\ challenge access \\
+  & 2025 & 1--64 & $10^2$--$10^5$ & LR & chosen challenges \\
 CalyPSO (Wisiol~et~al.)~\cite{calypso2024}
-  & 2024 & 1--8 & $10^5$--$10^7$ & PSO & GPU-accelerated \\
+  & 2024 & 1--20 & $10^5$--$10^7$ & PSO & GPU-accelerated \\
 This work & 2026 & 2--10 & $10^5$--$10^7$ & MLP & Probabilistic S-curve \\
 \bottomrule
 \end{tabular}
@@ -38,10 +38,12 @@ Ruhrmair~et~al.~\cite{ruhrmair2010modeling}, who showed that logistic regression
 with parity-encoded features achieves high accuracy on single APUFs, establishing
 the linear separability of individual APUF responses and motivating the XOR APUF
 as a countermeasure.  Subsequent work attacked higher XOR configurations through
-evolution strategies: Becker~\cite{becker2015cia} applied CMA-ES to 5-XOR and
-6-XOR APUFs, achieving above-chance accuracy with substantial CRP budgets, and
-the CalyPSO framework~\cite{calypso2024} employed particle swarm optimization
-on 8-XOR APUFs, reporting $>95\%$ accuracy with approximately 8M CRPs.  While
+evolution strategies: Becker~\cite{becker2015cia} introduced a
+reliability-based CMA-ES attack that models XOR APUFs one component Arbiter PUF
+at a time, breaking configurations up to 32-XOR (2M CRPs in simulation; 400k
+CRPs on silicon-emulated 8-XOR-4-way data), and the CalyPSO
+framework~\cite{calypso2024} combined particle swarm optimization with
+hardware-friendly modeling, reporting attacks on XOR APUFs up to $k=20$.  While
 these approaches established that higher XOR configurations are attackable, each
 reported a single success point and none characterized the \emph{probability} of
 success across the data spectrum.  Unlike prior work, we measure
@@ -57,11 +59,12 @@ proposed the MoPE and MMoPE frameworks, which dynamically adjust model
 complexity to match the PUF's XOR configuration, achieving success on up to
 7-XOR with improved sample efficiency; their analysis emphasized that
 architectural matching improves attack efficiency.  Sayadi~et~al.~\cite{sayadi2025}
-introduced a chosen-challenge attack strategy for XOR APUFs, demonstrating that
-selective challenge sampling reduces the CRP requirement by exploiting
-systematic biases in the PUF response distribution.  Wang~et~al.~\cite{wang2024c2d2}
-proposed the C2D2 framework that combines contrastive learning with data
-augmentation to improve generalization under limited CRP budgets.  While these
+introduced a chosen-challenge divide-and-conquer attack that models each
+underlying Arbiter PUF individually using highly correlated challenge pairs,
+breaking XOR APUFs even without reliability information.  Wang~et~al.~\cite{wang2024c2d2}
+proposed the C2D2 framework, which exploits statistical covariances in the
+challenge space and design dependency among PUF compositions to attack XOR
+APUFs, iPUFs, and bistable ring PUFs on both simulation and FPGA.  While these
 works advanced the state of the art in attack efficiency, they each frame the
 problem as a search for the best possible architecture or training strategy.
 Our work shows that below a data-dependent threshold, architectural
@@ -77,12 +80,12 @@ XOR complexity by approximately a factor of 2, drastically lowering the CRP
 requirement.  Crucially, Wisiol~et~al. also demonstrated that the Interpose PUF
 (iPUF)~\cite{nguyen2019}, proposed as a split-attack-resistant alternative,
 remains vulnerable: a $(3,3)$-iPUF is attackable with 3M CRPs, refuting the
-claimed security equivalence to a 6-XOR APUF.  We extend this result in
-two directions: a systematic sweep showing that all configurations up to
-$(4,4)$ fall at $10^6$ or fewer CRPs with $>99\%$ accuracy, and a quantitative
-effective-security characterization anchored to our scaling law---the
-split attack reduces the equivalent XOR complexity by exactly 2, yielding a
-CRP-budget gap of $\approx$5$\times$ to $\approx$21$\times$---moving beyond
+claimed security equivalence to a $(k_{\text{down}}+k_{\text{up}}/2)$-XOR
+APUF.  We extend this result with
+a systematic sweep showing that all configurations up to
+$(4,4)$ fall at $10^6$ or fewer CRPs with $>99\%$ accuracy, consistent with the
+$\max\{k_{\text{up}},k_{\text{down}}\}$ security level of the splitting attack,
+moving beyond
 the binary breakability statements typical of prior work.
 
 \paragraph{Theoretical perspectives.}

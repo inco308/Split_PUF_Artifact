@@ -64,7 +64,7 @@ total signal---the minimum required for the optimizer to escape the flat
 region around the trivial all-zero solution---requires
 $N_c \gtrsim 2^{k-1}$ CRPs, i.e., \emph{exponential growth with base 2 per
 additional XOR level}.  Our measurements give per-level factors of
-$3.4$--$6.1$, above this lower bound: the excess reflects optimizer
+$3.1$--$6.1$, above this lower bound: the excess reflects optimizer
 inefficiency and the ruggedness of the empirical landscape, both of which
 compound with $k$.  The same attenuation governs the likelihood surface of
 the 520-dimensional delay parameterization: candidate pairs differing in a
@@ -135,7 +135,9 @@ results/noise\_8xor\_5M.csv)---consistent with the predicted rightward shift
 of the S-curve at higher XOR levels.  The effect appears stronger at $k=8$
 than at $k=6$ (80\% $\to$ 60\% at 400k), suggesting that the noise-induced
 shift compounds with XOR complexity, though the sample sizes (5--10 per
-condition) preclude quantitative comparison.
+condition) preclude quantitative comparison.  Note that the 8-XOR noise
+experiment evaluates on noisy test labels, while the 6-XOR grid evaluates on
+clean test data; the 0/10 result is robust to this difference.
 
 Under typical environmental noise levels of $\varepsilon = 3$--$5\%$, this
 factor is between approximately $1.24$ and $1.40$ (a hypothetical estimate
@@ -175,9 +177,9 @@ anomalous ($N_{50}$ decreases):
 \begin{itemize}
     \item 2-XOR: $\sim$103{,}000 CRPs ($N_{50}$, logistic fit);
     \item 4-XOR: $<$75{,}000 CRPs ($N_{50}$; no data below 75k, estimate unreliable);
-    \item 6-XOR: $\sim$384{,}000 CRPs ($N_{50}$, logistic fit);
-    \item 7-XOR: $\sim$1{,}320{,}000 CRPs ($N_{50}$, logistic fit);
-    \item 8-XOR: $\sim$8{,}000{,}000 CRPs ($N_{50}$, logistic fit, 95\% CI [6.2M,~9.8M]);
+    \item 6-XOR: $\sim$349{,}000 CRPs ($N_{50}$, logistic fit);
+    \item 7-XOR: $\sim$1{,}090{,}000 CRPs ($N_{50}$, exact fit on two interior points);
+    \item 8-XOR: $\sim$6{,}600{,}000 CRPs ($N_{50}$, logistic fit, 95\% CI [5.9M,~7.5M]);
     \item 9-XOR: $>1.5\times10^7$ CRPs (very rough lower bound; 0/3 successes at 15M with CI [0\%,71\%]; 29 total trials across 5 CRP levels).
 \end{itemize}
 An 8-XOR APUF with CRP exposure limited to $5 \times 10^6$ provides
@@ -206,21 +208,21 @@ generation and authentication:
     successful run was observed at or below $2\times10^6$ CRPs.  Moving the
     cap to $5.5\times10^6$ confers no benefit---success probability rises to 50\%.
     \item \textbf{9-XOR for higher assurance margins.}  A 9-XOR APUF shows
-    no transition up to $1.5\times10^7$ CRPs, beyond the largest attack
-    mountable on a 24~GB GPU; the marginal hardware cost of one additional
-    XOR stage is small relative to the $>5\times$ increase in data
-    complexity.
+    no reliable transition point up to $1.5\times10^7$ CRPs, beyond the
+    largest attack mountable on a 24~GB GPU; the marginal hardware cost of
+    one additional XOR stage is small relative to an order-of-magnitude
+    increase in data complexity.
     \item \textbf{Silicon noise is a free hardening layer.}
     $\varepsilon = 3\%$ bit-flip noise erases the residual 28\% success at
     8-XOR/$5\times10^6$ CRPs (0/10 in our grid), shifting the S-curve
     rightward at no design cost, provided the PUF's error-correction
     requirements remain satisfiable.
     \item \textbf{Avoid iPUF designs.}  The split attack reduces the
-    effective security of every tested iPUF configuration by exactly 2 XOR
-    levels, while the interpose stage adds hardware cost: a designer
-    needing $(k_{\text{up}}+k_{\text{down}})$-XOR security obtains it more
-    cheaply---and without the structural leakage---from a plain XOR APUF of
-    that size.
+    effective security of every tested iPUF configuration to the
+    $\max\{k_{\text{up}},k_{\text{down}}\}$-XOR level, while the interpose
+    stage adds hardware cost: a designer needing that level of security
+    obtains it more cheaply---and without the structural leakage---from a
+    plain XOR APUF of that size.
 \end{itemize}
 
 \paragraph{Choice of success criterion.}
@@ -240,14 +242,12 @@ attack---if sufficient CRPs are available, a standard MLP suffices.
 
 \paragraph{iPUF is not a security solution.}
 Our iPUF results (\S\ref{sec:ipuf}) show that the split architecture
-dramatically reduces data complexity, and---beyond the known breakability
-result---that the reduction is \emph{quantifiable}: the equivalent XOR
-complexity drops by exactly 2 for every tested configuration, so the
-CRP-budget gap against the claimed level grows from $\approx$5$\times$ at
-$(2,4)$ to $\approx$21$\times$ at $(4,4)$ on our fitted scaling law.
-Designers should therefore treat the claimed
-$(k_{\text{up}}+k_{\text{down}})$ equivalence as an upper bound that is
-systematically violated by 2 XOR levels in the attacker's favor.
+dramatically reduces data complexity: the tested configurations fall at or
+below their claimed security level, with a split model of 7-XOR capacity
+breaking $(4,4)$ at $10^6$ CRPs, consistent with Wisiol's
+$\max\{k_{\text{up}},k_{\text{down}}\}$ characterization.
+Designers should treat iPUF security claims as unverified until a splitting
+attack has been attempted.
 
 \subsection{Limitations}
 \label{sec:limitations}

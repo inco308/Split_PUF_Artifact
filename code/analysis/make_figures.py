@@ -109,8 +109,8 @@ def fig_s_curves():
 
 def fig_scaling_law():
     ks = np.array([2, 4, 6, 7, 8, 9])
-    n50 = np.array([1.03e5, 7.5e4, 3.84e5, 1.32e6, 8.0e6, 12e6])
-    labels = ['103k', '<75k', '384k', '1.32M', '8.0M', '>10M']
+    n50 = np.array([1.03e5, 7.5e4, 3.49e5, 1.09e6, 6.6e6, 12e6])
+    labels = ['103k', '<75k', '349k', '1.09M', '6.6M', '>15M']
     fig, ax = plt.subplots(figsize=(4.2, 3.2))
     ax.semilogy(ks, n50, '-', color=CAT[0], linewidth=1.8, zorder=2)
     ax.plot(ks, n50, marker='o', linestyle='none', color=CAT[0],

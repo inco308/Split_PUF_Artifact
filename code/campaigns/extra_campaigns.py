@@ -64,8 +64,16 @@ def run_one(k, ds, eps, csv_path, row):
     tr = torch.from_numpy(d[:tn, -1:]).float().cuda()
     tv = torch.from_numpy(d[tn:tn + vn, :-1]).float().cuda()
     tvr = torch.from_numpy(d[tn:tn + vn, -1:]).float().cuda()
-    ttp = torch.from_numpy(d[tn + vn:, :-1]).float()
-    ttr = torch.from_numpy(d[tn + vn:, -1:]).float()
+    if eps is not None and eps > 0:
+        # 噪声实验: 测试集用干净的独立挑战(与冻结CSV协议一致)
+        tch = np.random.randint(0, 2, (50_000, 64)).astype(np.int8) * 2 - 1
+        tresp = batch_response(puf, tch).astype(np.float32)
+        ttp = torch.from_numpy(tch.astype(np.float32)).float()
+        ttr = torch.from_numpy(tresp.reshape(-1, 1)).float()
+        del tch, tresp
+    else:
+        ttp = torch.from_numpy(d[tn + vn:, :-1]).float()
+        ttr = torch.from_numpy(d[tn + vn:, -1:]).float()
     del d
     gc.collect()
     m = StdMLP(k).cuda()

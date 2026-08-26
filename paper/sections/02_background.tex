@@ -70,7 +70,7 @@ Recent advances include:
 \item \textbf{Evolution strategies.} Becker~\cite{becker2015cia}
 demonstrated CMA-ES attacks on 5-XOR and 6-XOR APUFs; the CalyPSO
 framework~\cite{calypso2024} extended this to particle swarm optimization,
-reporting success on 8-XOR with approximately 8M CRPs.
+reporting attacks on XOR APUFs up to $k=20$.
 
 \item \textbf{Deep learning.} Fei~et~al.~\cite{fei2024mope} proposed the
 MoPE and MMoPE frameworks, which adjust model complexity to PUF complexity
@@ -116,7 +116,7 @@ upper layer of $k_{\text{up}}$ XORed APUFs produces a response $r_{\text{up}}$,
 which is inserted into the challenge of a lower layer of $k_{\text{down}}$
 XORed APUFs at a fixed bit position.
 The security claim is that a $(k_{\text{up}}, k_{\text{down}})$-iPUF provides
-security equivalent to a $(k_{\text{up}} + k_{\text{down}})$-XOR APUF, because
+security comparable to a $(k_{\text{down}} + k_{\text{up}}/2)$-XOR APUF, because
 the attacker cannot separate the upper and lower layers.  Wisiol~et~al. refuted
 this claim by adapting the split attack to iPUFs: the upper layer is attacked
 independently and the lower layer conditioned on the predicted upper response.

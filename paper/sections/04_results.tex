@@ -134,11 +134,13 @@ The transition occurs between 500{,}000~CRPs (0/5, 0\%) and
 succeed (\texttt{7xor\_baseline.csv}, lines~7--11;
 \texttt{7xor\_N50\_fine.csv}, lines~7--11); at 1{,}250{,}000~CRPs, 8 of 10
 runs succeed (80\%; Wilson CI [49\%, 94\%]; \texttt{7xor\_N50\_fine.csv},
-lines~12--16 and 22--26).  At 1{,}500{,}000~CRPs, however, only 3 of 5 runs
+lines~12--16 and 22--26; runs 1--5 used the fixed-150-epoch protocol,
+runs 6--10 validation-based early stopping).  At 1{,}500{,}000~CRPs, however,
+only 3 of 5 runs
 succeed (60\%), illustrating that the transition remains stochastic well
 past its midpoint.  A comparison with the 6-XOR curve shows that the required data
-increases by a factor of approximately 3.4 per XOR level ($N_{50}(6) \approx
-3.84\times10^5$ to $N_{50}(7) \approx 1.32\times10^6$).
+increases by a factor of approximately 3.1 per XOR level ($N_{50}(6) \approx
+3.49\times10^5$ to $N_{50}(7) \approx 1.09\times10^6$).
 
 \paragraph{8-XOR.}
 The transition is both wider and more stochastic.  At 5{,}000{,}000~CRPs,
@@ -161,7 +163,7 @@ probability remains significantly below 100\%
 lines~32--51; \texttt{phase7\_variance.csv}, lines~18--33;
 \texttt{phase8\_bootstrap.csv}, lines~32--61).
 Logistic regression on the full dataset estimates the transition midpoint
-at approximately $8.0\times10^6$ CRPs (95\% CI [6.2M,~9.8M]),
+at approximately $6.6\times10^6$ CRPs (95\% CI [5.9M,~7.5M]),
 directly anchored by the 4/5 = 80\% empirical measurement at
 8{,}000{,}000~CRPs, substantially higher than the $5.5\times10^6$ suggested
 by interpolation of single data points.
@@ -204,7 +206,7 @@ finding (failed runs are all at or below random accuracy), but the
 \includegraphics[width=\columnwidth]{figures/s_curves.pdf}
 \caption{Probabilistic phase transition for 2-XOR through 9-XOR APUFs. Each curve shows the
 probability of attack success $P(\text{success} \mid N, k)$ as a function of CRP budget $N$.
-Markers are empirical measurements; dashed lines are logistic fits. Error bars denote
+Markers are empirical measurements. Error bars denote
 95\% Wilson score confidence intervals. The dashed horizontal line marks $P=0.5$ ($N_{50}$).}
 \label{fig:s_curves}
 \end{figure}
@@ -213,9 +215,9 @@ Markers are empirical measurements; dashed lines are logistic fits. Error bars d
 Taking $N_{50}$ as the characteristic scale, logistic fits to the full
 dataset yield the following estimates: $N_{50}(2) \approx 1.03\times10^5$ ($R^2=0.945$),
 $N_{50}(4) < 7.5\times10^4$ (80\% success at lowest tested budget; midpoint unconstrained below),
-$N_{50}(6) \approx 3.84\times10^5$ ($R^2=0.863$),
-$N_{50}(7) \approx 1.32\times10^6$ ($R^2=0.655$),
-$N_{50}(8) \approx 8.0\times10^6$ ($R^2=0.546$, 95\% CI [6.2M,~9.8M]), and
+$N_{50}(6) \approx 3.49\times10^5$ ($R^2=0.915$),
+$N_{50}(7) \approx 1.09\times10^6$ (exact fit on two interior points),
+$N_{50}(8) \approx 6.6\times10^6$ ($R^2=0.580$, 95\% CI [5.9M,~7.5M]), and
 $N_{50}(9) > 1.5\times10^7$ (very rough lower bound; 0/3 at 15M with
 CI [0\%, 71\%]; 29 total trials across 5 levels).
 The scaling ratio between successive XOR levels is roughly 3--6$\times$ per
@@ -223,11 +225,11 @@ additional XOR level for $k = 6\to7\to8$ (the only transitions with reliable
 $N_{50}$ estimates); the $k=2\to4$ transition is anomalous ($N_{50}$
 decreases), rather than following the factor of 2 predicted by a naive
 information-theoretic counting argument.
-However, the 8-XOR fit quality ($R^2 = 0.546$) and preliminary 9-XOR data
+However, the 8-XOR fit quality ($R^2 = 0.580$) and preliminary 9-XOR data
 caution against treating this as a stable law: the ratios
 $N_{50}(8) / N_{50}(7) \approx 6.1$,
-$N_{50}(7) / N_{50}(6) \approx 3.4$, and
-$N_{50}(9) / N_{50}(8) > 1.9$ (preliminary) vary across levels.
+$N_{50}(7) / N_{50}(6) \approx 3.1$, and
+$N_{50}(9) / N_{50}(8) > 2.3$ (preliminary) vary across levels.
 Overall, the empirical data complexity grows exponentially in $k$,
 but with a base larger than 2, indicating that MLPs become progressively less
 efficient at extracting information from CRPs as XOR complexity increases.
@@ -272,11 +274,11 @@ Data sources: \texttt{next\_experiments.csv} (lines~2--51) and
 \toprule
 $k$ & $N$ & MLP acc. (mean $\pm$ SD) & LR acc. & LR $>$90\%? \\
 \midrule
-4 & 100k  & $95.45 \pm 6.85\%$ & $50.18 \pm 0.53\%$ & No \\
-4 & 200k  & $98.88 \pm 0.19\%$ & $50.26 \pm 0.38\%$ & No \\
-6 & 300k  & $64.74 \pm 23.50\%$ & $50.05 \pm 0.22\%$ & No \\
-6 & 400k  & $89.40 \pm 20.16\%$ & $50.01 \pm 0.19\%$ & No \\
-6 & 500k  & $94.27 \pm 15.56\%$ & $50.12 \pm 0.15\%$ & No \\
+4 & 100k  & $95.45 \pm 6.85\%$ & $50.12 \pm 0.57\%$ & No \\
+4 & 200k  & $98.88 \pm 0.19\%$ & $50.30 \pm 0.40\%$ & No \\
+6 & 300k  & $64.74 \pm 23.50\%$ & $49.95 \pm 0.24\%$ & No \\
+6 & 400k  & $89.40 \pm 20.16\%$ & $49.98 \pm 0.20\%$ & No \\
+6 & 500k  & $94.27 \pm 15.56\%$ & $50.06 \pm 0.16\%$ & No \\
 8 & 5.0M  & $59.89 \pm 20.68\%$ & ---$^\dagger$ & --- \\
 8 & 5.5M  & $69.68 \pm 25.38\%$ & ---$^\dagger$ & --- \\
 \bottomrule
@@ -413,7 +415,7 @@ CMA-ES (pop.\ 23)  & 5{,}000{,}000 & 50.53\%       & 49.98\%       & 0.6929 \\
 \tablefloatend
 
 Table~\ref{tab:evo} shows the results at 2{,}000{,}000 and 5{,}000{,}000
-CRPs, both well below the fitted midpoint $N_{50}(8) \approx 8\times10^6$:
+CRPs, both well below the fitted midpoint $N_{50}(8) \approx 6.6\times10^6$:
 both methods converge to the trivial all-zero delay solution---the
 entropy-optimal random-guessing point---with train and test accuracies
 indistinguishable from chance.  The failure is thus not an artifact of MLP
@@ -429,19 +431,19 @@ below the data threshold.
 
 Interpose PUFs~(iPUFs) were proposed as a more secure alternative to XOR
 APUFs, claiming that a $(k_{\text{up}}, k_{\text{down}})$-iPUF provides
-security equivalent to a $(k_{\text{up}}+k_{\text{down}})$-XOR
-APUF~\cite{nguyen2019}.  Wisiol~et~al.~\cite{wisiol2020splitting}
-broke the single configuration $(3,3)$ with $3\times10^6$ CRPs.  We extend
-this in two directions: a \emph{systematic sweep} over all configurations up
-to $(4,4)$, showing that every one falls at $10^6$ or fewer CRPs, and a
-\emph{quantitative} characterization of the resulting effective security
-level, anchored to our XOR APUF scaling law (\S\ref{sec:success_curves}).
+security comparable to a $(k_{\text{down}}+k_{\text{up}}/2)$-XOR
+APUF~\cite{nguyen2019}.  Wisiol~et~al.~\cite{wisiol2020splitting} already
+showed that small iPUF configurations can be broken with modest CRP budgets,
+comparable to $\max\{k_{\text{up}},k_{\text{down}}\}$-XOR APUFs.  We extend
+this with a \emph{systematic sweep} over all configurations up to $(4,4)$,
+showing that every one falls at $10^6$ or fewer CRPs
+(\S\ref{sec:success_curves}).
 
 \tablefloatbegin
 \centering
 \caption{iPUF attack results.  All configurations are attacked successfully
-with 1{,}000{,}000~CRPs or fewer.  Equiv.\ XOR refers to the
-$k_{\text{up}}+k_{\text{down}}$ sum.  Data source:
+with 1{,}000{,}000~CRPs or fewer.  Equiv.\ XOR refers to the claimed
+$k_{\text{down}}+k_{\text{up}}/2$ level.  Data source:
 \texttt{phase4\_results.csv} (lines~2--13).}
 \label{tab:ipuf}
 \begin{tabular}{lcccc}
@@ -449,22 +451,22 @@ $k_{\text{up}}+k_{\text{down}}$ sum.  Data source:
 iPUF Config. & Equiv.\ XOR & $N$ (CRPs) & Test Acc. & Params \\
 \midrule
 \multirow{3}{*}{$(2,2)$}
-  & \multirow{3}{*}[-2pt]{4} & 1{,}000{,}000 & 99.67\% & 809 \\
+  & \multirow{3}{*}[-2pt]{3} & 1{,}000{,}000 & 99.67\% & 809 \\
   &                         & 2{,}000{,}000 & 99.79\% & 809 \\
   &                         & 5{,}000{,}000 & 99.86\% & 809 \\
 \midrule
 \multirow{3}{*}{$(2,4)$}
-  & \multirow{3}{*}[-2pt]{6} & 1{,}000{,}000 & 99.64\% & 6{,}305 \\
+  & \multirow{3}{*}[-2pt]{5} & 1{,}000{,}000 & 99.64\% & 6{,}305 \\
   &                         & 2{,}000{,}000 & 99.67\% & 6{,}305 \\
   &                         & 5{,}000{,}000 & 99.88\% & 6{,}305 \\
 \midrule
 \multirow{3}{*}{$(4,2)$}
-  & \multirow{3}{*}[-2pt]{6} & 1{,}000{,}000 & 99.64\% & 6{,}305 \\
+  & \multirow{3}{*}[-2pt]{4} & 1{,}000{,}000 & 99.64\% & 6{,}305 \\
   &                         & 2{,}000{,}000 & 99.78\% & 6{,}305 \\
   &                         & 5{,}000{,}000 & 99.91\% & 6{,}305 \\
 \midrule
 \multirow{3}{*}{$(4,4)$}
-  & \multirow{3}{*}[-2pt]{8} & 1{,}000{,}000 & 99.05\% & 20{,}801 \\
+  & \multirow{3}{*}[-2pt]{6} & 1{,}000{,}000 & 99.05\% & 20{,}801 \\
   &                         & 2{,}000{,}000 & 99.52\% & 20{,}801 \\
   &                         & 5{,}000{,}000 & 99.73\% & 20{,}801 \\
 \bottomrule
@@ -473,26 +475,21 @@ iPUF Config. & Equiv.\ XOR & $N$ (CRPs) & Test Acc. & Params \\
 
 All tested iPUF configurations succumb to the split attack with
 1{,}000{,}000~CRPs at $> 99\%$ accuracy (Table~\ref{tab:ipuf}).
-A $(4,4)$-iPUF---claimed to be as secure as an 8-XOR APUF---is attacked with
+A $(4,4)$-iPUF---claimed comparable to a 6-XOR APUF (Nguyen's
+$k_{\text{down}}+k_{\text{up}}/2$ formula)---is attacked with
 99.05\% accuracy using 20{,}801 total parameters.
 By contrast, a true 6-XOR APUF
 requires 500{,}000~CRPs for comparable reliability (90\% success
 probability), and our fitted scaling law estimates approximately
-$8.0\times 10^6$ CRPs for a true 8-XOR APUF---well beyond the
+$6.6\times 10^6$ CRPs for a true 8-XOR APUF---well beyond the
 1{,}000{,}000~CRPs at which the $(4,4)$-iPUF is trivially broken.
 The split architecture of the iPUF fundamentally leaks information that the
-XOR APUF does not.  In the tested configurations, the effective security
-level is consistent with that of a
-$(k_{\text{up}}+k_{\text{down}}-2)$-XOR APUF, i.e., the split attack reduces
-the equivalent XOR complexity by exactly 2 for every tested pair
-($4\to2$, $6\to4$, $8\to6$).  Because the XOR APUF data complexity grows
-super-linearly in $k$, this constant additive reduction translates into a
-rapidly growing multiplicative gap in CRP budget: $\approx$5$\times$ at
-$(2,4)$ and $\approx$21$\times$ at $(4,4)$ on our fitted scaling law
-($N_{50}(6)/N_{50}(4) \approx 5$ and
-$N_{50}(8)/N_{50}(6) \approx 21$).  The $(2,2)$ configuration is
-uninformative here, as its claimed and effective levels fall in the
-anomalous low-$k$ region where $N_{50}$ does not grow monotonically
-(\S\ref{sec:success_curves}).  This gap quantification---not the mere
-breakability, which is already established---is our principal contribution
-on iPUF security.
+XOR APUF does not.
+Under the corrected claimed equivalence, the measured vulnerability is
+consistent with Wisiol's finding that the splitting attack reduces iPUF
+security to roughly the $\max\{k_{\text{up}},k_{\text{down}}\}$-XOR level:
+our split models carry 7-XOR capacity for the $(4,4)$ configuration, and
+every tested configuration falls at $10^6$ or fewer CRPs.  The quantitative
+contribution of this section is the systematic sweep---all configurations up
+to $(4,4)$ broken at 1M CRPs with $>99\%$ accuracy---rather than a claimed
+security gap.
