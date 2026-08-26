@@ -264,15 +264,18 @@ configurations with $k \geq 4$ within the trainable data range.
 \tablefloatbegin
 \centering
 \caption{Comparison of MLP versus logistic regression (LR) attack
-performance.  LR accuracy is consistently $\approx 50\%$ for all tested
-configurations with $k \geq 4$ within the trainable data range.
-Data sources: \texttt{next\_experiments.csv} (lines~2--51) and
+performance.  Accuracies are mean $\pm$ sample SD across runs.  LR accuracy
+is consistently $\approx 50\%$ for all tested configurations with
+$k \geq 4$ within the trainable data range.  $^\dagger$LR on 8-XOR data
+could not be trained due to memory constraints (6M samples $\times$ 64
+features exceed the closed-form solver's capacity on a 12~GB GPU).  Data
+sources: \texttt{next\_experiments.csv} (lines~2--51) and
 \texttt{baseline\_mlp\_lr.csv} (lines~2--51).}
 \label{tab:lr_mlp}
-\resizebox{\columnwidth}{\height}{%
-\begin{tabular}{lcccc}
+\footnotesize
+\begin{tabular}{@{}lcccc@{}}
 \toprule
-$k$ & $N$ & MLP acc. (mean $\pm$ SD) & LR acc. & LR $>$90\%? \\
+$k$ & $N$ & MLP acc. & LR acc. & LR $>$90\%? \\
 \midrule
 4 & 100k  & $95.45 \pm 6.85\%$ & $50.12 \pm 0.57\%$ & No \\
 4 & 200k  & $98.88 \pm 0.19\%$ & $50.30 \pm 0.40\%$ & No \\
@@ -282,13 +285,7 @@ $k$ & $N$ & MLP acc. (mean $\pm$ SD) & LR acc. & LR $>$90\%? \\
 8 & 5.0M  & $59.89 \pm 20.68\%$ & ---$^\dagger$ & --- \\
 8 & 5.5M  & $69.68 \pm 25.38\%$ & ---$^\dagger$ & --- \\
 \bottomrule
-\multicolumn{5}{l}{\footnotesize $^\dagger$LR on 8-XOR data could not be
-trained due to memory constraints (6M samples $\times$ 64 features exceeds
-the closed-form solver's capacity on a 12GB GPU).}\\
-\multicolumn{5}{l}{\footnotesize Reported standard deviations are sample
-standard deviations.}
 \end{tabular}
-}
 \tablefloatend
 
 This result confirms that the XOR nonlinearity is fundamentally inaccessible
