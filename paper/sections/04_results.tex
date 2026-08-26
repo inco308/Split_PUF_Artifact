@@ -96,11 +96,6 @@ $k$ & $N$ (CRPs) & Successes & $P(\text{success})$ & $95\%$ CI \\
   & 15{,}000{,}000 & 0/3   & 0\%    & {[}0\%, 71\%{]} \\
 \bottomrule
 \end{tabular}
-
-\parbox{0.9\columnwidth}{\footnotesize $^\dagger$LR on 8-XOR data could
-not be trained due to memory constraints (6M samples $\times$ 64 features
-exceed the closed-form solver's capacity on a 12~GB GPU).  Reported standard
-deviations are sample standard deviations.}
 \tablefloatend
 
 \paragraph{2-XOR.}
@@ -288,6 +283,7 @@ $k$ & $N$ & MLP acc. (mean $\pm$ SD) & LR acc. & LR $>$90\%? \\
 \bottomrule
 \end{tabular}
 
+
 \parbox{0.9\columnwidth}{\footnotesize $^\dagger$LR on 8-XOR data could
 not be trained due to memory constraints (6M samples $\times$ 64 features
 exceed the closed-form solver's capacity on a 12~GB GPU).  Reported standard
@@ -337,11 +333,6 @@ Big MLP ($k{=}10$, $\sim$1.1M params) & 1{,}083{,}905 & 50.05\% & 136 \\
 \emph{Same MLP with 10M data}         & 74{,}369 & \textbf{99.71\%} & 1{,}666 \\
 \bottomrule
 \end{tabular}
-
-\parbox{0.9\columnwidth}{\footnotesize $^\dagger$LR on 8-XOR data could
-not be trained due to memory constraints (6M samples $\times$ 64 features
-exceed the closed-form solver's capacity on a 12~GB GPU).  Reported standard
-deviations are sample standard deviations.}
 \tablefloatend
 
 Table~\ref{tab:arch} shows the results.  Every architecture---from the
@@ -420,11 +411,6 @@ PSO (20 particles) & 5{,}000{,}000 & 50.03/50.10\% & 49.98/49.92\% & 0.6931 \\
 CMA-ES (pop.\ 23)  & 5{,}000{,}000 & 50.53\%       & 49.98\%       & 0.6929 \\
 \bottomrule
 \end{tabular}
-
-\parbox{0.9\columnwidth}{\footnotesize $^\dagger$LR on 8-XOR data could
-not be trained due to memory constraints (6M samples $\times$ 64 features
-exceed the closed-form solver's capacity on a 12~GB GPU).  Reported standard
-deviations are sample standard deviations.}
 \tablefloatend
 
 Table~\ref{tab:evo} shows the results at 2{,}000{,}000 and 5{,}000{,}000
@@ -484,11 +470,6 @@ iPUF Config. & Equiv.\ XOR & $N$ (CRPs) & Test Acc. & Params \\
   &                         & 5{,}000{,}000 & 99.73\% & 20{,}801 \\
 \bottomrule
 \end{tabular}
-
-\parbox{0.9\columnwidth}{\footnotesize $^\dagger$LR on 8-XOR data could
-not be trained due to memory constraints (6M samples $\times$ 64 features
-exceed the closed-form solver's capacity on a 12~GB GPU).  Reported standard
-deviations are sample standard deviations.}
 \tablefloatend
 
 All tested iPUF configurations succumb to the split attack with
